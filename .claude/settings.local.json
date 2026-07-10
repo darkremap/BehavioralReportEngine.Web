@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"ALTER TABLE core.Organization ADD LogoPath NVARCHAR\\(500\\) NULL;\" -C 2>&1)",
+      "PowerShell($b = [Convert]::FromBase64String\\('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='\\); [IO.File]::WriteAllBytes\\('C:\\\\Users\\\\Harry\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\D--Ana-AnaPlaygroupReport-03-BehavioralReportEngine-Web\\\\6af1eba7-c938-4d3b-b7eb-eb954c04e1d0\\\\scratchpad\\\\test-logo.png', $b\\))",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT OrganizationId, Name, LogoPath FROM core.Organization WHERE OrganizationId=3;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT ParticipantId, FirstNameFa, LastNameFa, OrganizationId FROM core.Participant;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT SessionId, SessionName, OrganizationId, GameVersionId FROM session.GameSession;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT ReportTemplateId, TemplateName, ReportScope, GameVersionId FROM template.ReportTemplate;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT gv.GameVersionId, g.NameFa, g.NameEn FROM game.GameVersion gv JOIN game.Game g ON g.GameId=gv.GameId;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"INSERT INTO template.ReportTemplate \\(GameVersionId, ReportScope, TemplateName, VersionNumber, IsActive, CreatedAt\\) VALUES \\(1, 'Individual', 'SELVA Standard Report', '1.0', 1, SYSUTCDATETIME\\(\\)\\);\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT ReportId, ReportTitle FROM report.Report;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT IndicatorDefinitionId, Title, TitleEn, ScoringScaleId, DisplayOrder FROM game.IndicatorDefinition WHERE GameVersionId=1;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT ScoringScaleId, ScaleCode, MinValue, MaxValue FROM game.ScoringScale;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT BehavioralPatternId, Name, NameEn FROM game.BehavioralPattern;\" -C 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -Q \"SELECT KeyMomentId, Title, TimestampMs, SessionId FROM session.KeyMoment;\" -C 2>&1)",
+      "PowerShell(Get-Process -Id 36684 -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Id 36684 -Force)",
+      "PowerShell(if \\($?\\) { \"still running\" } else { \"process terminated\" })",
+      "PowerShell(Get-Process -Id 21092 -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Name \"BehavioralReportEngine.Web\" -ErrorAction SilentlyContinue)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}

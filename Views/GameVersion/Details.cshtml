@@ -1,0 +1,27 @@
+@model BehavioralReportEngine.Web.Models.GameVersion
+
+@{
+    ViewData["Title"] = "GameVersion Details";
+}
+
+<h2>Game Version Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Game</dt>
+    <dd class="col-sm-9">@Model.Game?.NameFa</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.VersionNumber)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.VersionNumber)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.VersionLabel)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.VersionLabel)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.EffectiveFrom)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.EffectiveFrom)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.EffectiveTo)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.EffectiveTo)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsCurrent)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.IsCurrent)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.ReleaseNotes)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.ReleaseNotes)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.GameVersionId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

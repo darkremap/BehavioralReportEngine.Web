@@ -1,0 +1,23 @@
+@model BehavioralReportEngine.Web.Models.BehavioralPattern
+
+@{
+    ViewData["Title"] = "BehavioralPattern Details";
+}
+
+<h2>Behavioral Pattern Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.PatternCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.PatternCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Name)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.NameEn)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.NameEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Description)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsGlobal)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.IsGlobal)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.BehavioralPatternId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

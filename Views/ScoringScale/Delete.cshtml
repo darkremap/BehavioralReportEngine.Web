@@ -1,0 +1,30 @@
+@model BehavioralReportEngine.Web.Models.ScoringScale
+
+@{
+    ViewData["Title"] = "Delete ScoringScale";
+}
+
+<h2>Delete Scoring Scale</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this scoring scale?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ScaleCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.ScaleCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Name)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.MinValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.MinValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.MaxValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.MaxValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.StepValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.StepValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Description)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="ScoringScaleId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

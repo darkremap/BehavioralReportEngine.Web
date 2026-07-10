@@ -1,0 +1,24 @@
+@model BehavioralReportEngine.Web.Models.UserRole
+
+@{
+    ViewData["Title"] = "Delete UserRole";
+}
+
+<h2>Delete User Role</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this user role?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.RoleCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.RoleCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.RoleName)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.RoleName)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Description)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="RoleId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

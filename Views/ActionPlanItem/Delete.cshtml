@@ -1,0 +1,30 @@
+@model BehavioralReportEngine.Web.Models.ActionPlanItem
+
+@{
+    ViewData["Title"] = "Delete ActionPlanItem";
+}
+
+<h2>Delete Action Plan Item</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this action plan item?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Report</dt>
+    <dd class="col-sm-9">@Model.Report?.ReportTitle</dd>
+<dt class="col-sm-3">Indicator Definition</dt>
+    <dd class="col-sm-9">@Model.IndicatorDefinition?.TitleEn</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.ActionDescription)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.ActionDescription)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.TimeFrame)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.TimeFrame)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Priority)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Priority)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisplayOrder)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.DisplayOrder)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="ActionPlanItemId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

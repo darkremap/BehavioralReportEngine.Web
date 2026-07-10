@@ -1,0 +1,44 @@
+@model BehavioralReportEngine.Web.Models.Participant
+
+@{
+    ViewData["Title"] = "Delete Participant";
+}
+
+<h2>Delete Participant</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this participant?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Organization</dt>
+    <dd class="col-sm-9">@Model.Organization?.Name</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.PersonnelCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.PersonnelCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.FirstNameFa)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.FirstNameFa)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LastNameFa)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LastNameFa)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.FirstNameEn)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.FirstNameEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LastNameEn)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LastNameEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Email)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Email)</dd>
+<dt class="col-sm-3">Department</dt>
+    <dd class="col-sm-9">@Model.Department?.NameFa</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.BirthDate)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.BirthDate)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Gender)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Gender)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.JobTitle)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.JobTitle)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.MetadataJson)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.MetadataJson)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsActive)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.IsActive)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="ParticipantId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

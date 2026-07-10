@@ -1,0 +1,19 @@
+@model BehavioralReportEngine.Web.Models.UserRole
+
+@{
+    ViewData["Title"] = "UserRole Details";
+}
+
+<h2>User Role Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.RoleCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.RoleCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.RoleName)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.RoleName)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Description)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.RoleId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

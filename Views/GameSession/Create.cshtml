@@ -1,0 +1,63 @@
+@model BehavioralReportEngine.Web.Models.GameSession
+
+@{
+    ViewData["Title"] = "Create GameSession";
+}
+
+<h2>Create Game Session</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="OrganizationId" class="form-label"></label>
+                <select asp-for="OrganizationId" class="form-select" asp-items="ViewBag.OrganizationId"></select>
+                <span asp-validation-for="OrganizationId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="GameVersionId" class="form-label"></label>
+                <select asp-for="GameVersionId" class="form-select" asp-items="ViewBag.GameVersionId"></select>
+                <span asp-validation-for="GameVersionId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SessionCode" class="form-label"></label>
+                <input asp-for="SessionCode" class="form-control" />
+                <span asp-validation-for="SessionCode" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SessionName" class="form-label"></label>
+                <input asp-for="SessionName" class="form-control" />
+                <span asp-validation-for="SessionName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SessionDate" class="form-label"></label>
+                <input asp-for="SessionDate" class="form-control" type="date" />
+                <span asp-validation-for="SessionDate" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="StartTime" class="form-label"></label>
+                <input asp-for="StartTime" class="form-control" type="date" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EndTime" class="form-label"></label>
+                <input asp-for="EndTime" class="form-control" type="date" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Location" class="form-label"></label>
+                <input asp-for="Location" class="form-control" />
+                <span asp-validation-for="Location" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label"></label>
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,21 @@
+@model BehavioralReportEngine.Web.Models.ScoringScaleLevel
+
+@{
+    ViewData["Title"] = "ScoringScaleLevel Details";
+}
+
+<h2>Scoring Scale Level Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Scoring Scale</dt>
+    <dd class="col-sm-9">@Model.ScoringScale?.Name</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LevelValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LevelValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LevelLabel)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LevelLabel)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LevelDescription)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LevelDescription)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.ScoringScaleLevelId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

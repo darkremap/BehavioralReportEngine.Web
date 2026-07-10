@@ -1,0 +1,28 @@
+@model BehavioralReportEngine.Web.Models.GamePattern
+
+@{
+    ViewData["Title"] = "Delete GamePattern";
+}
+
+<h2>Delete Game Pattern</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this game pattern?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Game Version</dt>
+    <dd class="col-sm-9">@Model.GameVersion?.VersionNumber</dd>
+<dt class="col-sm-3">Behavioral Pattern</dt>
+    <dd class="col-sm-9">@Model.BehavioralPattern?.NameEn</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.CustomName)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.CustomName)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.CustomDescription)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.CustomDescription)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisplayOrder)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.DisplayOrder)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="GamePatternId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

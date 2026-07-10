@@ -1,0 +1,60 @@
+@{
+    ViewData["Title"] = "Dashboard";
+    var counts = ViewBag.Counts as Dictionary<string, int>;
+}
+
+<div class="mb-4">
+    <h1>Behavioral Report Engine</h1>
+    <p class="text-muted">Multi-game behavioral analytics reporting platform. Use the navigation above to manage organizations, game definitions, sessions, report templates and generated reports.</p>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-3 mb-4">
+    @if (counts != null)
+    {
+        foreach (var kv in counts)
+        {
+            <div class="col">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h6 class="card-subtitle text-muted mb-2">@kv.Key</h6>
+                        <h2 class="card-title">@kv.Value</h2>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <h5>Core</h5>
+        <ul class="list-unstyled">
+            <li><a asp-controller="Organization" asp-action="Index">Organizations</a></li>
+            <li><a asp-controller="AppUser" asp-action="Index">Users</a></li>
+            <li><a asp-controller="UserRole" asp-action="Index">User Roles</a></li>
+            <li><a asp-controller="Participant" asp-action="Index">Participants</a></li>
+            <li><a asp-controller="Department" asp-action="Index">Departments</a></li>
+        </ul>
+    </div>
+    <div class="col-md-4">
+        <h5>Game Definitions</h5>
+        <ul class="list-unstyled">
+            <li><a asp-controller="Game" asp-action="Index">Games</a></li>
+            <li><a asp-controller="GameType" asp-action="Index">Game Types</a></li>
+            <li><a asp-controller="GameVersion" asp-action="Index">Game Versions</a></li>
+            <li><a asp-controller="IndicatorDefinition" asp-action="Index">Indicators</a></li>
+            <li><a asp-controller="BehavioralPattern" asp-action="Index">Behavioral Patterns</a></li>
+            <li><a asp-controller="ScoringScale" asp-action="Index">Scoring Scales</a></li>
+        </ul>
+    </div>
+    <div class="col-md-4">
+        <h5>Sessions &amp; Reports</h5>
+        <ul class="list-unstyled">
+            <li><a asp-controller="GameSession" asp-action="Index">Game Sessions</a></li>
+            <li><a asp-controller="Team" asp-action="Index">Teams</a></li>
+            <li><a asp-controller="Observation" asp-action="Index">Observations</a></li>
+            <li><a asp-controller="Report" asp-action="Index">Reports</a></li>
+            <li><a asp-controller="ReportTemplate" asp-action="Index">Report Templates</a></li>
+        </ul>
+    </div>
+</div>

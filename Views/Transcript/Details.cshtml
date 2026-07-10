@@ -1,0 +1,21 @@
+@model BehavioralReportEngine.Web.Models.Transcript
+
+@{
+    ViewData["Title"] = "Transcript Details";
+}
+
+<h2>Transcript Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Game Session</dt>
+    <dd class="col-sm-9">@Model.GameSession?.SessionName</dd>
+<dt class="col-sm-3">Media Asset</dt>
+    <dd class="col-sm-9">@Model.MediaAsset?.FileName</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Language)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Language)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.FullText)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.FullText)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.TranscriptId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

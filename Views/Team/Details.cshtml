@@ -1,0 +1,19 @@
+@model BehavioralReportEngine.Web.Models.Team
+
+@{
+    ViewData["Title"] = "Team Details";
+}
+
+<h2>Team Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Game Session</dt>
+    <dd class="col-sm-9">@Model.GameSession?.SessionName</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.TeamName)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.TeamName)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.TeamCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.TeamCode)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.TeamId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

@@ -1,0 +1,23 @@
+@model BehavioralReportEngine.Web.Models.ReportTemplateModule
+
+@{
+    ViewData["Title"] = "ReportTemplateModule Details";
+}
+
+<h2>Report Template Module Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Report Template</dt>
+    <dd class="col-sm-9">@Model.ReportTemplate?.TemplateName</dd>
+<dt class="col-sm-3">Report Module Type</dt>
+    <dd class="col-sm-9">@Model.ReportModuleType?.Name</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisplayOrder)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.DisplayOrder)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsRequired)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.IsRequired)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.ConfigJson)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.ConfigJson)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.ReportTemplateModuleId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

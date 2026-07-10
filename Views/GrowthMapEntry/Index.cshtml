@@ -1,0 +1,42 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.GrowthMapEntry>
+
+@{
+    ViewData["Title"] = "GrowthMapEntry List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Growth Map Entry</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Growth Map Entry</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Area)</th>
+            <th>@Html.DisplayNameFor(model => model.CurrentState)</th>
+            <th>@Html.DisplayNameFor(model => model.TargetState)</th>
+            <th>@Html.DisplayNameFor(model => model.DisplayOrder)</th>
+            <th>Report</th>
+            <th>IndicatorDefinition</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.Area</td>
+                <td>@item.CurrentState</td>
+                <td>@item.TargetState</td>
+                <td>@item.DisplayOrder</td>
+                <td>@item.Report?.ReportTitle</td>
+                <td>@item.IndicatorDefinition?.TitleEn</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.GrowthMapEntryId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.GrowthMapEntryId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.GrowthMapEntryId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

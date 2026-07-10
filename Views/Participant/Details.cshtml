@@ -1,0 +1,40 @@
+@model BehavioralReportEngine.Web.Models.Participant
+
+@{
+    ViewData["Title"] = "Participant Details";
+}
+
+<h2>Participant Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Organization</dt>
+    <dd class="col-sm-9">@Model.Organization?.Name</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.PersonnelCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.PersonnelCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.FirstNameFa)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.FirstNameFa)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LastNameFa)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LastNameFa)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.FirstNameEn)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.FirstNameEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LastNameEn)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LastNameEn)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Email)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Email)</dd>
+<dt class="col-sm-3">Department</dt>
+    <dd class="col-sm-9">@Model.Department?.NameFa</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.BirthDate)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.BirthDate)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Gender)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Gender)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.JobTitle)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.JobTitle)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.MetadataJson)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.MetadataJson)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsActive)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.IsActive)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.ParticipantId" class="btn btn-primary">Edit</a>
+<a asp-controller="Report" asp-action="Create" asp-route-participantId="@Model.ParticipantId" class="btn btn-success">ایجاد گزارش جدید</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

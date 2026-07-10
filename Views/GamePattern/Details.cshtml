@@ -1,0 +1,23 @@
+@model BehavioralReportEngine.Web.Models.GamePattern
+
+@{
+    ViewData["Title"] = "GamePattern Details";
+}
+
+<h2>Game Pattern Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Game Version</dt>
+    <dd class="col-sm-9">@Model.GameVersion?.VersionNumber</dd>
+<dt class="col-sm-3">Behavioral Pattern</dt>
+    <dd class="col-sm-9">@Model.BehavioralPattern?.NameEn</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.CustomName)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.CustomName)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.CustomDescription)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.CustomDescription)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisplayOrder)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.DisplayOrder)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.GamePatternId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

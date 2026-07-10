@@ -1,0 +1,30 @@
+@model BehavioralReportEngine.Web.Models.GrowthMapEntry
+
+@{
+    ViewData["Title"] = "Delete GrowthMapEntry";
+}
+
+<h2>Delete Growth Map Entry</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this growth map entry?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Report</dt>
+    <dd class="col-sm-9">@Model.Report?.ReportTitle</dd>
+<dt class="col-sm-3">Indicator Definition</dt>
+    <dd class="col-sm-9">@Model.IndicatorDefinition?.TitleEn</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Area)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Area)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.CurrentState)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.CurrentState)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.TargetState)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.TargetState)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisplayOrder)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.DisplayOrder)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="GrowthMapEntryId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

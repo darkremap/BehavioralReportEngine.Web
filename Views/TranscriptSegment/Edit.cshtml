@@ -1,0 +1,49 @@
+@model BehavioralReportEngine.Web.Models.TranscriptSegment
+
+@{
+    ViewData["Title"] = "Edit TranscriptSegment";
+}
+
+<h2>Edit Transcript Segment</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="TranscriptSegmentId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="TranscriptId" class="form-label"></label>
+                <select asp-for="TranscriptId" class="form-select" asp-items="ViewBag.TranscriptId"></select>
+                <span asp-validation-for="TranscriptId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SpeakerParticipantId" class="form-label"></label>
+                <select asp-for="SpeakerParticipantId" class="form-select" asp-items="ViewBag.SpeakerParticipantId"><option value="">-- None --</option></select>
+                <span asp-validation-for="SpeakerParticipantId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SpeakerLabel" class="form-label"></label>
+                <input asp-for="SpeakerLabel" class="form-control" />
+                <span asp-validation-for="SpeakerLabel" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="StartTimeMs" class="form-label"></label>
+                <input asp-for="StartTimeMs" class="form-control" />
+                <span asp-validation-for="StartTimeMs" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EndTimeMs" class="form-label"></label>
+                <input asp-for="EndTimeMs" class="form-control" />
+                <span asp-validation-for="EndTimeMs" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SegmentText" class="form-label"></label>
+                <textarea asp-for="SegmentText" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="SegmentText" class="text-danger"></span>
+            </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

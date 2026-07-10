@@ -1,0 +1,19 @@
+@model BehavioralReportEngine.Web.Models.SessionFacilitator
+
+@{
+    ViewData["Title"] = "SessionFacilitator Details";
+}
+
+<h2>Session Facilitator Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Game Session</dt>
+    <dd class="col-sm-9">@Model.GameSession?.SessionName</dd>
+<dt class="col-sm-3">App User</dt>
+    <dd class="col-sm-9">@Model.AppUser?.FullName</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.RoleInSession)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.RoleInSession)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.SessionFacilitatorId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

@@ -1,0 +1,28 @@
+@model BehavioralReportEngine.Web.Models.Organization
+
+@{
+    ViewData["Title"] = "Delete Organization";
+}
+
+<h2>Delete Organization</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this organization?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.OrganizationCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.OrganizationCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Name)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Industry)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Industry)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Country)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Country)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.IsActive)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.IsActive)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="OrganizationId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,43 @@
+@model BehavioralReportEngine.Web.Models.GameType
+
+@{
+    ViewData["Title"] = "Edit GameType";
+}
+
+<h2>Edit Game Type</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="GameTypeId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="TypeCode" class="form-label"></label>
+                <input asp-for="TypeCode" class="form-control" />
+                <span asp-validation-for="TypeCode" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="NameFa" class="form-label"></label>
+                <input asp-for="NameFa" class="form-control" />
+                <span asp-validation-for="NameFa" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="NameEn" class="form-label"></label>
+                <input asp-for="NameEn" class="form-control" />
+                <span asp-validation-for="NameEn" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="IsActive" class="form-check-input" />
+                <label class="form-check-label" asp-for="IsActive"></label>
+            </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

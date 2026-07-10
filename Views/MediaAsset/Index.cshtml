@@ -1,0 +1,42 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.MediaAsset>
+
+@{
+    ViewData["Title"] = "MediaAsset List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Media Asset</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Media Asset</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.MediaType)</th>
+            <th>@Html.DisplayNameFor(model => model.FileName)</th>
+            <th>@Html.DisplayNameFor(model => model.StoragePath)</th>
+            <th>@Html.DisplayNameFor(model => model.DurationSeconds)</th>
+            <th>@Html.DisplayNameFor(model => model.RecordedAt)</th>
+            <th>GameSession</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.MediaType</td>
+                <td>@item.FileName</td>
+                <td>@item.StoragePath</td>
+                <td>@item.DurationSeconds</td>
+                <td>@item.RecordedAt?.ToString("g")</td>
+                <td>@item.GameSession?.SessionName</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.MediaAssetId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.MediaAssetId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.MediaAssetId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,52 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.ReportModule>
+
+@{
+    ViewData["Title"] = "ReportModule List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Report Module</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Report Module</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.DisplayOrder)</th>
+            <th>@Html.DisplayNameFor(model => model.ContentText)</th>
+            <th>@Html.DisplayNameFor(model => model.ContentHtml)</th>
+            <th>@Html.DisplayNameFor(model => model.IsAiGenerated)</th>
+            <th>@Html.DisplayNameFor(model => model.AiModel)</th>
+            <th>@Html.DisplayNameFor(model => model.AiPromptRef)</th>
+            <th>@Html.DisplayNameFor(model => model.ReviewedAt)</th>
+            <th>Report</th>
+            <th>ReportModuleType</th>
+            <th>IndicatorDefinition</th>
+            <th>AppUser</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.DisplayOrder</td>
+                <td>@item.ContentText</td>
+                <td>@item.ContentHtml</td>
+                <td>@(item.IsAiGenerated ? "Yes" : "No")</td>
+                <td>@item.AiModel</td>
+                <td>@item.AiPromptRef</td>
+                <td>@item.ReviewedAt?.ToString("g")</td>
+                <td>@item.Report?.ReportTitle</td>
+                <td>@item.ReportModuleType?.Name</td>
+                <td>@item.IndicatorDefinition?.TitleEn</td>
+                <td>@item.AppUser?.FullName</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.ReportModuleId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.ReportModuleId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.ReportModuleId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

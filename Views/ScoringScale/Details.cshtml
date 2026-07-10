@@ -1,0 +1,25 @@
+@model BehavioralReportEngine.Web.Models.ScoringScale
+
+@{
+    ViewData["Title"] = "ScoringScale Details";
+}
+
+<h2>Scoring Scale Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">@Html.DisplayNameFor(m => m.ScaleCode)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.ScaleCode)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Name)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Name)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.MinValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.MinValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.MaxValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.MaxValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.StepValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.StepValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Description)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.ScoringScaleId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

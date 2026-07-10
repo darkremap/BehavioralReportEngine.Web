@@ -1,0 +1,73 @@
+@model BehavioralReportEngine.Web.Models.ReportModule
+
+@{
+    ViewData["Title"] = "Edit ReportModule";
+}
+
+<h2>Edit Report Module</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="ReportModuleId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="ReportId" class="form-label"></label>
+                <select asp-for="ReportId" class="form-select" asp-items="ViewBag.ReportId"></select>
+                <span asp-validation-for="ReportId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ReportModuleTypeId" class="form-label"></label>
+                <select asp-for="ReportModuleTypeId" class="form-select" asp-items="ViewBag.ReportModuleTypeId"></select>
+                <span asp-validation-for="ReportModuleTypeId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="IndicatorDefinitionId" class="form-label"></label>
+                <select asp-for="IndicatorDefinitionId" class="form-select" asp-items="ViewBag.IndicatorDefinitionId"><option value="">-- None --</option></select>
+                <span asp-validation-for="IndicatorDefinitionId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DisplayOrder" class="form-label"></label>
+                <input asp-for="DisplayOrder" class="form-control" />
+                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ContentText" class="form-label"></label>
+                <textarea asp-for="ContentText" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="ContentText" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ContentHtml" class="form-label"></label>
+                <textarea asp-for="ContentHtml" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="ContentHtml" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="IsAiGenerated" class="form-check-input" />
+                <label class="form-check-label" asp-for="IsAiGenerated"></label>
+            </div>
+            <div class="mb-3">
+                <label asp-for="AiModel" class="form-label"></label>
+                <input asp-for="AiModel" class="form-control" />
+                <span asp-validation-for="AiModel" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="AiPromptRef" class="form-label"></label>
+                <input asp-for="AiPromptRef" class="form-control" />
+                <span asp-validation-for="AiPromptRef" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ReviewedByUserId" class="form-label"></label>
+                <select asp-for="ReviewedByUserId" class="form-select" asp-items="ViewBag.ReviewedByUserId"><option value="">-- None --</option></select>
+                <span asp-validation-for="ReviewedByUserId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ReviewedAt" class="form-label"></label>
+                <input asp-for="ReviewedAt" class="form-control" type="date" />
+                <span asp-validation-for="ReviewedAt" class="text-danger"></span>
+            </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

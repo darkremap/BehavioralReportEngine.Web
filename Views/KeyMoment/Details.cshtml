@@ -1,0 +1,31 @@
+@model BehavioralReportEngine.Web.Models.KeyMoment
+
+@{
+    ViewData["Title"] = "KeyMoment Details";
+}
+
+<h2>Key Moment Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Game Session</dt>
+    <dd class="col-sm-9">@Model.GameSession?.SessionName</dd>
+<dt class="col-sm-3">Team</dt>
+    <dd class="col-sm-9">@Model.Team?.TeamName</dd>
+<dt class="col-sm-3">Participant</dt>
+    <dd class="col-sm-9">@Model.Participant?.FirstNameFa</dd>
+<dt class="col-sm-3">Media Asset</dt>
+    <dd class="col-sm-9">@Model.MediaAsset?.FileName</dd>
+<dt class="col-sm-3">Transcript Segment</dt>
+    <dd class="col-sm-9">@Model.TranscriptSegment?.TranscriptSegmentId</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.TimestampMs)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.TimestampMs)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Title)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Title)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Description)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Description)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Significance)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Significance)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.KeyMomentId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

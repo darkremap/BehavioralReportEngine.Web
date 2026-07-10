@@ -1,0 +1,78 @@
+@model BehavioralReportEngine.Web.Models.Report
+
+@{
+    ViewData["Title"] = "Create Report";
+}
+
+<h2>Create Report</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="ReportScope" class="form-label"></label>
+                <input asp-for="ReportScope" class="form-control" />
+                <span asp-validation-for="ReportScope" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ReportTemplateId" class="form-label"></label>
+                <select asp-for="ReportTemplateId" class="form-select" asp-items="ViewBag.ReportTemplateId"></select>
+                <span asp-validation-for="ReportTemplateId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SessionId" class="form-label"></label>
+                <select asp-for="SessionId" class="form-select" asp-items="ViewBag.SessionId"></select>
+                <span asp-validation-for="SessionId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ParticipantId" class="form-label"></label>
+                <select asp-for="ParticipantId" class="form-select" asp-items="ViewBag.ParticipantId"><option value="">-- None --</option></select>
+                <span asp-validation-for="ParticipantId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="TeamId" class="form-label"></label>
+                <select asp-for="TeamId" class="form-select" asp-items="ViewBag.TeamId"><option value="">-- None --</option></select>
+                <span asp-validation-for="TeamId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="OrganizationId" class="form-label"></label>
+                <select asp-for="OrganizationId" class="form-select" asp-items="ViewBag.OrganizationId"></select>
+                <span asp-validation-for="OrganizationId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="GameVersionId" class="form-label"></label>
+                <select asp-for="GameVersionId" class="form-select" asp-items="ViewBag.GameVersionId"></select>
+                <span asp-validation-for="GameVersionId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ReportTitle" class="form-label"></label>
+                <input asp-for="ReportTitle" class="form-control" />
+                <span asp-validation-for="ReportTitle" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="GeneratedAt" class="form-label"></label>
+                <input asp-for="GeneratedAt" class="form-control" type="date" />
+                <span asp-validation-for="GeneratedAt" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="GeneratedByUserId" class="form-label"></label>
+                <select asp-for="GeneratedByUserId" class="form-select" asp-items="ViewBag.GeneratedByUserId"><option value="">-- None --</option></select>
+                <span asp-validation-for="GeneratedByUserId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="GenerationMethod" class="form-label"></label>
+                <input asp-for="GenerationMethod" class="form-control" />
+                <span asp-validation-for="GenerationMethod" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label"></label>
+                <input asp-for="Status" class="form-control" />
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

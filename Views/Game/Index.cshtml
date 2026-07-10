@@ -1,0 +1,54 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.Game>
+
+@{
+    ViewData["Title"] = "Game List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Game</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Game</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.GameCode)</th>
+            <th>@Html.DisplayNameFor(model => model.NameFa)</th>
+            <th>@Html.DisplayNameFor(model => model.NameEn)</th>
+            <th>@Html.DisplayNameFor(model => model.Summary)</th>
+            <th>@Html.DisplayNameFor(model => model.TitleFa)</th>
+            <th>@Html.DisplayNameFor(model => model.TitleEn)</th>
+            <th>@Html.DisplayNameFor(model => model.DescriptionFa)</th>
+            <th>@Html.DisplayNameFor(model => model.DescriptionEn)</th>
+            <th>@Html.DisplayNameFor(model => model.DurationMinutes)</th>
+            <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+            <th>AppUser</th>
+            <th>GameType</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.GameCode</td>
+                <td>@item.NameFa</td>
+                <td>@item.NameEn</td>
+                <td>@item.Summary</td>
+                <td>@item.TitleFa</td>
+                <td>@item.TitleEn</td>
+                <td>@item.DescriptionFa</td>
+                <td>@item.DescriptionEn</td>
+                <td>@item.DurationMinutes</td>
+                <td>@(item.IsActive ? "Yes" : "No")</td>
+                <td>@item.AppUser?.FullName</td>
+                <td>@item.GameType?.NameFa</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.GameId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.GameId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.GameId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

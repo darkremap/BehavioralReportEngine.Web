@@ -1,0 +1,46 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.Observation>
+
+@{
+    ViewData["Title"] = "Observation List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Observation</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Observation</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.ObservationTimeMs)</th>
+            <th>@Html.DisplayNameFor(model => model.ObservationText)</th>
+            <th>GameSession</th>
+            <th>Participant</th>
+            <th>Team</th>
+            <th>AppUser</th>
+            <th>IndicatorDefinition</th>
+            <th>BehavioralPattern</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.ObservationTimeMs</td>
+                <td>@item.ObservationText</td>
+                <td>@item.GameSession?.SessionName</td>
+                <td>@item.Participant?.FirstNameFa</td>
+                <td>@item.Team?.TeamName</td>
+                <td>@item.AppUser?.FullName</td>
+                <td>@item.IndicatorDefinition?.TitleEn</td>
+                <td>@item.BehavioralPattern?.NameEn</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.ObservationId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.ObservationId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.ObservationId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

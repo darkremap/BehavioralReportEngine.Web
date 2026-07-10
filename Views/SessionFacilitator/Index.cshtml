@@ -1,0 +1,36 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.SessionFacilitator>
+
+@{
+    ViewData["Title"] = "SessionFacilitator List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Session Facilitator</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Session Facilitator</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.RoleInSession)</th>
+            <th>GameSession</th>
+            <th>AppUser</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.RoleInSession</td>
+                <td>@item.GameSession?.SessionName</td>
+                <td>@item.AppUser?.FullName</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.SessionFacilitatorId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.SessionFacilitatorId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.SessionFacilitatorId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

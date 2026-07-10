@@ -1,0 +1,40 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.GameType>
+
+@{
+    ViewData["Title"] = "GameType List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Game Type</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Game Type</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.TypeCode)</th>
+            <th>@Html.DisplayNameFor(model => model.NameFa)</th>
+            <th>@Html.DisplayNameFor(model => model.NameEn)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.TypeCode</td>
+                <td>@item.NameFa</td>
+                <td>@item.NameEn</td>
+                <td>@item.Description</td>
+                <td>@(item.IsActive ? "Yes" : "No")</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.GameTypeId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.GameTypeId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.GameTypeId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

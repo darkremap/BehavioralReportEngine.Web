@@ -1,0 +1,332 @@
+@using System
+@using System.Linq
+@using BehavioralReportEngine.Web.ViewModels
+@model ReportPrintViewModel
+@{
+    Layout = "_PrintLayout";
+    ViewData["Title"] = "چاپ گزارش";
+    var report = Model.Report;
+    var gameName = report.GameVersion?.Game?.NameEn ?? report.GameVersion?.Game?.NameFa ?? "";
+    var participantName = report.Participant != null
+        ? (string.IsNullOrWhiteSpace(report.Participant.FullNameFa) ? report.Participant.FullNameEn : report.Participant.FullNameFa)
+        : (report.Team?.TeamName ?? "-");
+    var reportDate = (report.GeneratedAt ?? report.CreatedAt).ToString("yyyy/MM/dd");
+    var reportCode = $"ANA-{report.ReportId}";
+
+    string DotClass(int filled, int index) => index < filled ? "dot filled" : "dot";
+}
+
+<style>
+    .cover-page { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .cover-logo { max-height: 90px; margin-top: 30px; }
+    .cover-title { font-size: 46px; font-weight: 800; letter-spacing: 6px; color: #1b4332; margin: 24px 0 4px; }
+    .cover-subtitle { font-size: 20px; font-weight: 600; color: #223; margin-bottom: 2px; }
+    .cover-subtitle-en { font-size: 12px; letter-spacing: 3px; color: #999; text-transform: uppercase; margin-bottom: 40px; }
+    .cover-info { width: 100%; max-width: 480px; text-align: right; margin-top: 20px; }
+    .cover-info-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; padding: 10px 4px; font-size: 15px; }
+    .cover-info-row .label { color: #888; }
+    .cover-info-row .value { font-weight: 600; color: #1b2a33; }
+    .cover-footer-note { margin-top: auto; font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 14px; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #1b4332; font-weight: 700; border-bottom: 2px solid #eef4f2; padding-bottom: 10px; margin-bottom: 20px; }
+    .page-footer { position: absolute; bottom: 10mm; left: 12mm; right: 12mm; display: flex; justify-content: space-between; font-size: 11px; color: #aaa; border-top: 1px solid #eee; padding-top: 8px; }
+
+    h1.page-title { font-size: 26px; color: #14213d; margin: 0 0 6px; }
+    p.page-desc { color: #667; font-size: 13px; max-width: 640px; margin-bottom: 20px; }
+
+    .card-box { background: #f7fafa; border: 1px solid #e7efee; border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; }
+    .card-box h3 { font-size: 15px; margin: 0 0 10px; color: #1b4332; }
+
+    .radar-wrap { display: flex; justify-content: center; margin: 10px 0 20px; }
+    .radar-wrap canvas { max-width: 480px; max-height: 480px; }
+    .legend-row { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; font-size: 11px; color: #555; }
+    .legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 4px; }
+
+    .indicator-layout { display: flex; gap: 22px; }
+    .indicator-aside { width: 190px; flex-shrink: 0; text-align: center; }
+    .indicator-aside .score { font-size: 34px; font-weight: 800; color: #2a9d8f; }
+    .indicator-aside .score small { font-size: 16px; color: #999; }
+    .indicator-aside .level-label { font-weight: 700; margin-top: 6px; }
+    .dots { display: flex; justify-content: center; gap: 4px; margin: 8px 0; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #ddd; }
+    .dot.filled { background: #2a9d8f; }
+    .indicator-main { flex: 1; }
+    ul.evidence-list { list-style: none; padding: 0; margin: 0; }
+    ul.evidence-list li { padding: 6px 0; border-bottom: 1px dashed #eee; font-size: 13px; }
+    ul.evidence-list li:before { content: "✓ "; color: #2a9d8f; font-weight: 700; }
+
+    .pattern-row { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .pattern-row .name { width: 160px; font-weight: 700; }
+    .pattern-row .bar-track { flex: 1; background: #eee; border-radius: 6px; height: 10px; overflow: hidden; }
+    .pattern-row .bar-fill { background: #2a9d8f; height: 100%; }
+    .pattern-row .score { width: 60px; text-align: left; font-weight: 700; color: #2a9d8f; font-size: 13px; }
+    .pattern-row.dominant .name { color: #1b4332; }
+
+    .moment-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px dashed #eee; }
+    .moment-time { width: 60px; flex-shrink: 0; font-weight: 700; color: #2a9d8f; }
+    .moment-title { font-weight: 700; margin-bottom: 2px; }
+    .moment-desc { font-size: 13px; color: #556; }
+
+    .growth-cols { display: flex; gap: 14px; }
+    .growth-col { flex: 1; background: #f7fafa; border-radius: 10px; padding: 14px; }
+    .growth-col h4 { font-size: 14px; margin: 0 0 8px; }
+    .growth-entry { font-size: 12px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #ddd; }
+    .growth-entry .area { font-weight: 700; }
+
+    .priority-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+    .priority-High { background: #fde2e2; color: #c0392b; }
+    .priority-Medium { background: #fff3cd; color: #b8860b; }
+    .priority-Low { background: #e6f4ea; color: #2a9d8f; }
+</style>
+
+<!-- Page 1: Cover -->
+<div class="report-page cover-page">
+    @if (!string.IsNullOrEmpty(report.Organization?.LogoPath))
+    {
+        <img src="@report.Organization.LogoPath" class="cover-logo" alt="Logo" />
+    }
+    <div class="cover-title">@gameName</div>
+    <div class="cover-subtitle">گزارش مشاهده رفتاری</div>
+    <div class="cover-subtitle-en">BEHAVIORAL OBSERVATION REPORT</div>
+
+    <div class="cover-info">
+        <div class="cover-info-row"><span class="label">نام فرد</span><span class="value">@participantName</span></div>
+        <div class="cover-info-row"><span class="label">سازمان</span><span class="value">@(report.Organization?.Name ?? "-")</span></div>
+        <div class="cover-info-row"><span class="label">تاریخ اجرا</span><span class="value">@reportDate</span></div>
+        <div class="cover-info-row"><span class="label">کد گزارش</span><span class="value">@reportCode</span></div>
+    </div>
+
+    <div class="cover-footer-note">
+        این گزارش بر اساس مشاهده رفتار در یک تجربه گروهی تهیه شده و به منزله تشخیص شخصیت یا ارزیابی روان‌شناختی نیست.
+    </div>
+</div>
+
+<!-- Page 2: Radar overview -->
+@if (Model.IndicatorScores.Any())
+{
+    <div class="report-page">
+        <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span>02</span></div>
+        <h1 class="page-title">نقشه شاخص‌های کلیدی @participantName</h1>
+        <p class="page-desc">این نمودار خلاصه‌ای از الگوی تعاملی @participantName در این تجربه است. هر شاخص نشان‌دهنده یک بعد کلیدی از رفتار است.</p>
+
+        <div class="radar-wrap"><canvas id="radarChart" width="440" height="440"></canvas></div>
+
+        <div class="legend-row">
+            <span><span class="legend-dot" style="background:#e63946"></span>نیاز به توجه</span>
+            <span><span class="legend-dot" style="background:#f4a261"></span>نیاز به رشد</span>
+            <span><span class="legend-dot" style="background:#e9c46a"></span>متوسط</span>
+            <span><span class="legend-dot" style="background:#2a9d8f"></span>خوب</span>
+            <span><span class="legend-dot" style="background:#1b4332"></span>بسیار قوی</span>
+        </div>
+    </div>
+}
+
+<!-- One page per indicator -->
+@foreach (var score in Model.IndicatorScores)
+{
+    var max = score.ScoringScale?.MaxValue ?? 5m;
+    var level = ReportPrintViewModel.GetLevel(score.ScoreValue, max);
+    var (levelLabel, levelColor) = ReportPrintViewModel.GetLevelInfo(level);
+    var filledDots = (int)System.Math.Round((score.ScoreValue / max) * 5m);
+    <div class="report-page">
+        <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span></span></div>
+        <div class="indicator-layout">
+            <div class="indicator-aside">
+                <h2 style="font-size:18px;margin-bottom:4px;">@score.IndicatorDefinition?.Title</h2>
+                <div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:10px;">@score.IndicatorDefinition?.TitleEn</div>
+                <div class="score">@score.ScoreValue.ToString("0.0") <small>/@max.ToString("0.#")</small></div>
+                <div class="dots">
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <span class="@DotClass(filledDots, i)"></span>
+                    }
+                </div>
+                <div class="level-label" style="color:@levelColor;">@levelLabel</div>
+                @if (!string.IsNullOrWhiteSpace(score.IndicatorDefinition?.ShortDefinition))
+                {
+                    <p style="font-size:12px;color:#667;margin-top:14px;">@score.IndicatorDefinition.ShortDefinition</p>
+                }
+            </div>
+            <div class="indicator-main">
+                @if (!string.IsNullOrWhiteSpace(score.ObservedEvidence))
+                {
+                    <div class="card-box">
+                        <h3>شواهد مشاهده شده</h3>
+                        <ul class="evidence-list">
+                            @foreach (var line in score.ObservedEvidence.Split('\n', System.StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                <li>@line.Trim()</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(score.IndicatorBehaviors))
+                {
+                    <div class="card-box">
+                        <h3>رفتارهای شاخص</h3>
+                        <p style="font-size:13px;">@score.IndicatorBehaviors</p>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(score.Strengths))
+                {
+                    <div class="card-box">
+                        <h3>نقاط قوت</h3>
+                        <p style="font-size:13px;">@score.Strengths</p>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(score.GrowthOpportunities))
+                {
+                    <div class="card-box">
+                        <h3>فرصت‌های رشد</h3>
+                        <p style="font-size:13px;">@score.GrowthOpportunities</p>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(score.PracticalRecommendation))
+                {
+                    <div class="card-box">
+                        <h3>توصیه کاربردی</h3>
+                        <p style="font-size:13px;">@score.PracticalRecommendation</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Behavioral patterns page -->
+@if (Model.PatternScores.Any())
+{
+    var patternMax = Model.PatternScores.Count;
+    <div class="report-page">
+        <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span></span></div>
+        <h1 class="page-title">الگوهای رفتاری مشاهده‌شده</h1>
+        <p class="page-desc">بر اساس تحلیل گفتگو، الگوهای رفتاری اصلی @participantName در تعاملاتش شناسایی شده است.</p>
+
+        @foreach (var p in Model.PatternScores)
+        {
+            var pct = patternMax > 0 && p.ScoreValue.HasValue ? (double)(p.ScoreValue.Value / patternMax) * 100 : 0;
+            <div class="pattern-row @(p.IsDominantPattern ? "dominant" : "")">
+                <div class="name">@p.BehavioralPattern?.Name @(p.IsDominantPattern ? "⭐" : "")</div>
+                <div class="bar-track"><div class="bar-fill" style="width:@(pct)%;"></div></div>
+                <div class="score">@(p.ScoreValue?.ToString("0.0") ?? "-") /@patternMax</div>
+            </div>
+        }
+
+        @{ var summaryText = Model.PatternScores.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.Description))?.Description; }
+        @if (!string.IsNullOrWhiteSpace(summaryText))
+        {
+            <div class="card-box" style="margin-top:20px;">
+                <h3>جمع‌بندی</h3>
+                <p style="font-size:13px;">@summaryText</p>
+            </div>
+        }
+    </div>
+}
+
+<!-- Key moments timeline -->
+@if (Model.KeyMoments.Any())
+{
+    <div class="report-page">
+        <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span></span></div>
+        <h1 class="page-title">لحظات کلیدی جلسه</h1>
+        <p class="page-desc">این تایم‌لاین، رویدادهای مهم و نقاط عطف رفتاری را در طول جلسه نشان می‌دهد.</p>
+
+        @foreach (var m in Model.KeyMoments)
+        {
+            var ms = m.KeyMoment?.TimestampMs ?? 0;
+            var ts = System.TimeSpan.FromMilliseconds(ms);
+            <div class="moment-item">
+                <div class="moment-time">@ts.ToString(@"mm\:ss")</div>
+                <div>
+                    <div class="moment-title">@m.KeyMoment?.Title</div>
+                    <div class="moment-desc">@(m.NarrativeText ?? m.KeyMoment?.Description)</div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Growth map + summary -->
+@if (Model.GrowthMapEntries.Any() || Model.ActionPlanItems.Any())
+{
+    <div class="report-page">
+        <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span></span></div>
+        <h1 class="page-title">نقشه رشد</h1>
+        <p class="page-desc">با توجه به تحلیل رفتارهای @participantName در این جلسه، مسیر رشد در بخش‌های زیر خلاصه شده است.</p>
+
+        @if (Model.GrowthMapEntries.Any())
+        {
+            <div class="growth-cols">
+                @foreach (var g in Model.GrowthMapEntries)
+                {
+                    <div class="growth-col">
+                        <h4>@g.Area</h4>
+                        @if (!string.IsNullOrWhiteSpace(g.CurrentState))
+                        {
+                            <div class="growth-entry"><span class="area">وضعیت فعلی:</span> @g.CurrentState</div>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(g.TargetState))
+                        {
+                            <div class="growth-entry"><span class="area">هدف:</span> @g.TargetState</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @if (Model.ActionPlanItems.Any())
+        {
+            <div class="card-box" style="margin-top:20px;">
+                <h3>برنامه اقدام</h3>
+                @foreach (var a in Model.ActionPlanItems)
+                {
+                    <div class="growth-entry">
+                        <span class="priority-badge priority-@(a.Priority ?? "Medium")">@a.Priority</span>
+                        @a.ActionDescription
+                        @if (!string.IsNullOrWhiteSpace(a.TimeFrame))
+                        {
+                            <span style="color:#999;font-size:11px;"> (@a.TimeFrame)</span>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="card-box" style="margin-top:20px;">
+            <h3>پیام نهایی</h3>
+            <p style="font-size:13px;">هر گفتگو فرصتی است برای شناخت بهتر خود و دیگران. با آگاهی، تمرین و بازخورد مستمر، می‌توانید در هر تعامل یک قدم به نسخه بهتر خود نزدیک‌تر شوید.</p>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        var ctx = document.getElementById('radarChart');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.IndicatorScores.Select(s => $"\"{s.IndicatorDefinition?.Title}\"")))],
+                    datasets: [{
+                        label: 'امتیاز',
+                        data: [@Html.Raw(string.Join(",", Model.IndicatorScores.Select(s => s.ScoreValue.ToString(System.Globalization.CultureInfo.InvariantCulture))))],
+                        fill: true,
+                        backgroundColor: 'rgba(42,157,143,0.25)',
+                        borderColor: '#2a9d8f',
+                        pointBackgroundColor: '#2a9d8f'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: @(Model.IndicatorScores.Any() ? Model.IndicatorScores.Max(s => s.ScoringScale?.MaxValue ?? 5m) : 5m),
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    </script>
+}

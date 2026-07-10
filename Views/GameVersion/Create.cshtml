@@ -1,0 +1,52 @@
+@model BehavioralReportEngine.Web.Models.GameVersion
+
+@{
+    ViewData["Title"] = "Create GameVersion";
+}
+
+<h2>Create Game Version</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="mb-3">
+                <label asp-for="GameId" class="form-label"></label>
+                <select asp-for="GameId" class="form-select" asp-items="ViewBag.GameId"></select>
+                <span asp-validation-for="GameId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="VersionNumber" class="form-label"></label>
+                <input asp-for="VersionNumber" class="form-control" />
+                <span asp-validation-for="VersionNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="VersionLabel" class="form-label"></label>
+                <input asp-for="VersionLabel" class="form-control" />
+                <span asp-validation-for="VersionLabel" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EffectiveFrom" class="form-label"></label>
+                <input asp-for="EffectiveFrom" class="form-control" type="date" />
+                <span asp-validation-for="EffectiveFrom" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="EffectiveTo" class="form-label"></label>
+                <input asp-for="EffectiveTo" class="form-control" type="date" />
+                <span asp-validation-for="EffectiveTo" class="text-danger"></span>
+            </div>
+            <div class="form-check mb-3">
+                <input asp-for="IsCurrent" class="form-check-input" />
+                <label class="form-check-label" asp-for="IsCurrent"></label>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ReleaseNotes" class="form-label"></label>
+                <textarea asp-for="ReleaseNotes" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="ReleaseNotes" class="text-danger"></span>
+            </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,25 @@
+@model BehavioralReportEngine.Web.Models.GrowthMapEntry
+
+@{
+    ViewData["Title"] = "GrowthMapEntry Details";
+}
+
+<h2>Growth Map Entry Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Report</dt>
+    <dd class="col-sm-9">@Model.Report?.ReportTitle</dd>
+<dt class="col-sm-3">Indicator Definition</dt>
+    <dd class="col-sm-9">@Model.IndicatorDefinition?.TitleEn</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.Area)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.Area)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.CurrentState)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.CurrentState)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.TargetState)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.TargetState)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisplayOrder)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.DisplayOrder)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.GrowthMapEntryId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

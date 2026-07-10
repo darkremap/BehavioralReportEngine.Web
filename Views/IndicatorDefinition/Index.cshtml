@@ -1,0 +1,46 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.IndicatorDefinition>
+
+@{
+    ViewData["Title"] = "IndicatorDefinition List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Indicator Definition</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Indicator Definition</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.IndicatorCode)</th>
+            <th>@Html.DisplayNameFor(model => model.Title)</th>
+            <th>@Html.DisplayNameFor(model => model.TitleEn)</th>
+            <th>@Html.DisplayNameFor(model => model.ShortDefinition)</th>
+            <th>@Html.DisplayNameFor(model => model.DisplayOrder)</th>
+            <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+            <th>GameVersion</th>
+            <th>ScoringScale</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.IndicatorCode</td>
+                <td>@item.Title</td>
+                <td>@item.TitleEn</td>
+                <td>@item.ShortDefinition</td>
+                <td>@item.DisplayOrder</td>
+                <td>@(item.IsActive ? "Yes" : "No")</td>
+                <td>@item.GameVersion?.VersionNumber</td>
+                <td>@item.ScoringScale?.Name</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.IndicatorDefinitionId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.IndicatorDefinitionId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.IndicatorDefinitionId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

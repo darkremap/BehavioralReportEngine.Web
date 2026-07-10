@@ -1,0 +1,42 @@
+@model IEnumerable<BehavioralReportEngine.Web.Models.ScoringScale>
+
+@{
+    ViewData["Title"] = "ScoringScale List";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Scoring Scale</h2>
+    <a asp-action="Create" class="btn btn-primary">+ New Scoring Scale</a>
+</div>
+
+<table class="table table-striped table-hover align-middle">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.ScaleCode)</th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.MinValue)</th>
+            <th>@Html.DisplayNameFor(model => model.MaxValue)</th>
+            <th>@Html.DisplayNameFor(model => model.StepValue)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+                <td>@item.ScaleCode</td>
+                <td>@item.Name</td>
+                <td>@item.MinValue</td>
+                <td>@item.MaxValue</td>
+                <td>@item.StepValue</td>
+                <td>@item.Description</td>
+                <td class="text-nowrap">
+                <a asp-action="Details" asp-route-id="@item.ScoringScaleId" class="btn btn-sm btn-outline-secondary">View</a>
+                <a asp-action="Edit" asp-route-id="@item.ScoringScaleId" class="btn btn-sm btn-outline-primary">Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.ScoringScaleId" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

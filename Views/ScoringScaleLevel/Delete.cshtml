@@ -1,0 +1,26 @@
+@model BehavioralReportEngine.Web.Models.ScoringScaleLevel
+
+@{
+    ViewData["Title"] = "Delete ScoringScaleLevel";
+}
+
+<h2>Delete Scoring Scale Level</h2>
+
+<div class="alert alert-warning">Are you sure you want to delete this scoring scale level?</div>
+
+<dl class="row">
+    <dt class="col-sm-3">Scoring Scale</dt>
+    <dd class="col-sm-9">@Model.ScoringScale?.Name</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LevelValue)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LevelValue)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LevelLabel)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LevelLabel)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.LevelDescription)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.LevelDescription)</dd>
+</dl>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="ScoringScaleLevelId" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,21 @@
+@model BehavioralReportEngine.Web.Models.ReportKeyMoment
+
+@{
+    ViewData["Title"] = "ReportKeyMoment Details";
+}
+
+<h2>Report Key Moment Details</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Report</dt>
+    <dd class="col-sm-9">@Model.Report?.ReportTitle</dd>
+<dt class="col-sm-3">Key Moment</dt>
+    <dd class="col-sm-9">@Model.KeyMoment?.Title</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.DisplayOrder)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.DisplayOrder)</dd>
+<dt class="col-sm-3">@Html.DisplayNameFor(m => m.NarrativeText)</dt>
+    <dd class="col-sm-9">@Html.DisplayFor(m => m.NarrativeText)</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.ReportKeyMomentId" class="btn btn-primary">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>
