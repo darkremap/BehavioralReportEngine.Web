@@ -5,68 +5,106 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
-    <MudText Typo="Typo.h5">@Registration.DisplayLabel</MudText>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
-               Href="@($"/entities/{Registration.Name}/create")">
-        New @Registration.DisplayLabel
-    </MudButton>
-</MudStack>
-
-@if (_items == null)
+@if (_metadata == null)
 {
     <MudProgressCircular Indeterminate="true" />
 }
 else
 {
-    <MudTable Items="@_items" Hover="true" Dense="true" Bordered="true">
-        <HeaderContent>
-            @foreach (var prop in _metadata!.Properties)
+    <MudDataGrid @ref="_dataGrid" T="TEntity" ServerData="ServerReloadAsync" Filterable="false" Hover="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">@Registration.DisplayLabel</MudText>
+            <MudSpacer />
+            <MudTextField T="string" ValueChanged="OnSearch" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+                       Href="@($"/entities/{Registration.Name}/create")" Class="ml-4">
+                New
+            </MudButton>
+        </ToolBarContent>
+        <Columns>
+            @foreach (var prop in _metadata.Properties)
             {
-                <MudTh>@prop.Name</MudTh>
+                <TemplateColumn Title="@prop.Name" Sortable="true" SortBy="@(GetSortSelector(prop))">
+                    <CellTemplate>@FormatValue(context.Item, prop)</CellTemplate>
+                </TemplateColumn>
             }
-            <MudTh></MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            @foreach (var prop in _metadata!.Properties)
-            {
-                <MudTd>@FormatValue(context, prop)</MudTd>
-            }
-            <MudTd>
-                <MudStack Row="true" Spacing="1">
-                    <MudButton Size="Size.Small" Variant="Variant.Outlined"
-                               Href="@($"/entities/{Registration.Name}/details/{GetId(context)}")">View</MudButton>
-                    <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary"
-                               Href="@($"/entities/{Registration.Name}/edit/{GetId(context)}")">Edit</MudButton>
-                    @if (Registration.Name == "Report")
-                    {
-                        <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Success"
-                                   Href="@($"/reports/{GetId(context)}/print")" Target="_blank">Print</MudButton>
-                    }
-                    <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error"
-                               OnClick="@(() => DeleteAsync(context))">Delete</MudButton>
-                </MudStack>
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
+            <TemplateColumn Title="" Sortable="false">
+                <CellTemplate>
+                    <MudStack Row="true" Spacing="1">
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                                   Href="@($"/entities/{Registration.Name}/details/{GetId(context.Item)}")">View</MudButton>
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary"
+                                   Href="@($"/entities/{Registration.Name}/edit/{GetId(context.Item)}")">Edit</MudButton>
+                        @if (Registration.Name == "Report")
+                        {
+                            <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Success"
+                                       Href="@($"/reports/{GetId(context.Item)}/print")" Target="_blank">Print</MudButton>
+                        }
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error"
+                                   OnClick="@(() => DeleteAsync(context.Item))">Delete</MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="TEntity" />
+        </PagerContent>
+    </MudDataGrid>
 }
 
 @code {
-    private List<TEntity>? _items;
+    private MudDataGrid<TEntity>? _dataGrid;
     private EntityMetadata? _metadata;
+    private string? _searchString;
     private EntityRegistration Registration => EntityRegistry.Resolve(typeof(TEntity).Name)!;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         _metadata = MetadataService.GetMetadata(typeof(TEntity));
-        await LoadAsync();
     }
 
-    private async Task LoadAsync()
+    // Dynamic column -> stable string key used by GridState.SortDefinitions; resolved back to
+    // the PropertyDescriptor by name in ServerReloadAsync since properties aren't known at compile time.
+    private Func<TEntity, object> GetSortSelector(PropertyDescriptor prop) =>
+        entity => prop.ClrProperty.GetValue(entity) ?? "";
+
+    private async Task<GridData<TEntity>> ServerReloadAsync(GridState<TEntity> state)
     {
         using var context = await DbFactory.CreateDbContextAsync();
-        var set = context.Set<TEntity>();
-        _items = set.ToList();
+        IEnumerable<TEntity> items = context.Set<TEntity>().ToList();
+
+        if (!string.IsNullOrWhiteSpace(_searchString))
+        {
+            items = items.Where(e => _metadata!.Properties.Any(p =>
+            {
+                var val = p.ClrProperty.GetValue(e);
+                return val != null && val.ToString()!.Contains(_searchString, StringComparison.OrdinalIgnoreCase);
+            }));
+        }
+
+        var totalItems = items.Count();
+
+        var sortDefinition = state.SortDefinitions.FirstOrDefault();
+        if (sortDefinition != null)
+        {
+            var prop = _metadata!.Properties.FirstOrDefault(p => p.Name == sortDefinition.SortBy);
+            if (prop != null)
+            {
+                items = sortDefinition.Descending
+                    ? items.OrderByDescending(e => prop.ClrProperty.GetValue(e), Comparer<object>.Create((a, b) => System.Collections.Comparer.Default.Compare(a, b)))
+                    : items.OrderBy(e => prop.ClrProperty.GetValue(e), Comparer<object>.Create((a, b) => System.Collections.Comparer.Default.Compare(a, b)));
+            }
+        }
+
+        var pagedData = items.Skip(state.Page * state.PageSize).Take(state.PageSize).ToArray();
+        return new GridData<TEntity> { TotalItems = totalItems, Items = pagedData };
+    }
+
+    private Task OnSearch(string text)
+    {
+        _searchString = text;
+        return _dataGrid!.ReloadServerData();
     }
 
     private object? GetId(TEntity entity) => _metadata!.PrimaryKeyProperty.GetValue(entity);
@@ -101,8 +139,7 @@ else
             context.Remove(tracked);
             await context.SaveChangesAsync();
             Snackbar.Add("Deleted.", Severity.Success);
-            await LoadAsync();
-            StateHasChanged();
+            await _dataGrid!.ReloadServerData();
         }
         catch (DbUpdateException ex)
         {
