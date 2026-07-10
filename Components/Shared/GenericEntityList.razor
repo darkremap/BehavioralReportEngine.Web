@@ -1,0 +1,112 @@
+@typeparam TEntity where TEntity : class
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject EntityMetadataService MetadataService
+@inject NavigationManager Navigation
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-4">
+    <MudText Typo="Typo.h5">@Registration.DisplayLabel</MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+               Href="@($"/entities/{Registration.Name}/create")">
+        New @Registration.DisplayLabel
+    </MudButton>
+</MudStack>
+
+@if (_items == null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="@_items" Hover="true" Dense="true" Bordered="true">
+        <HeaderContent>
+            @foreach (var prop in _metadata!.Properties)
+            {
+                <MudTh>@prop.Name</MudTh>
+            }
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            @foreach (var prop in _metadata!.Properties)
+            {
+                <MudTd>@FormatValue(context, prop)</MudTd>
+            }
+            <MudTd>
+                <MudStack Row="true" Spacing="1">
+                    <MudButton Size="Size.Small" Variant="Variant.Outlined"
+                               Href="@($"/entities/{Registration.Name}/details/{GetId(context)}")">View</MudButton>
+                    <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Primary"
+                               Href="@($"/entities/{Registration.Name}/edit/{GetId(context)}")">Edit</MudButton>
+                    @if (Registration.Name == "Report")
+                    {
+                        <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Success"
+                                   Href="@($"/reports/{GetId(context)}/print")" Target="_blank">Print</MudButton>
+                    }
+                    <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error"
+                               OnClick="@(() => DeleteAsync(context))">Delete</MudButton>
+                </MudStack>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code {
+    private List<TEntity>? _items;
+    private EntityMetadata? _metadata;
+    private EntityRegistration Registration => EntityRegistry.Resolve(typeof(TEntity).Name)!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _metadata = MetadataService.GetMetadata(typeof(TEntity));
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        var set = context.Set<TEntity>();
+        _items = set.ToList();
+    }
+
+    private object? GetId(TEntity entity) => _metadata!.PrimaryKeyProperty.GetValue(entity);
+
+    private string FormatValue(TEntity entity, PropertyDescriptor prop)
+    {
+        var value = prop.ClrProperty.GetValue(entity);
+        if (value == null) return "";
+        if (prop.IsForeignKey && prop.PrincipalType != null)
+        {
+            using var context = DbFactory.CreateDbContext();
+            var principal = context.Find(prop.PrincipalType, value);
+            if (principal != null)
+                return EntityMetadataService.GetDisplayText(principal, prop);
+        }
+        return value.ToString() ?? "";
+    }
+
+    private async Task DeleteAsync(TEntity entity)
+    {
+        var confirmed = await DialogService.ShowMessageBox(
+            "Delete", $"Delete this {Registration.DisplayLabel}?", yesText: "Delete", cancelText: "Cancel");
+        if (confirmed != true) return;
+
+        using var context = await DbFactory.CreateDbContextAsync();
+        var id = GetId(entity);
+        var tracked = await context.FindAsync<TEntity>(id);
+        if (tracked == null) return;
+
+        try
+        {
+            context.Remove(tracked);
+            await context.SaveChangesAsync();
+            Snackbar.Add("Deleted.", Severity.Success);
+            await LoadAsync();
+            StateHasChanged();
+        }
+        catch (DbUpdateException ex)
+        {
+            Snackbar.Add(Helpers.DbExceptionHelper.GetFriendlyMessage(ex), Severity.Error);
+        }
+    }
+}

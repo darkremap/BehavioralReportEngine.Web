@@ -1,0 +1,40 @@
+@page "/"
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<MudText Typo="Typo.h4" Class="mb-2">Behavioral Report Engine</MudText>
+<MudText Class="mb-4">Multi-game behavioral analytics reporting platform. Use the navigation on the left to manage organizations, game definitions, sessions, report templates and generated reports.</MudText>
+
+@if (_counts != null)
+{
+    <MudGrid>
+        @foreach (var (label, count) in _counts)
+        {
+            <MudItem xs="12" sm="6" md="4" lg="2">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.subtitle2">@label</MudText>
+                        <MudText Typo="Typo.h4">@count</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
+
+@code {
+    private List<(string Label, int Count)>? _counts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        _counts = new List<(string, int)>
+        {
+            ("Organizations", await context.Organizations.CountAsync()),
+            ("Participants", await context.Participants.CountAsync()),
+            ("Games", await context.Games.CountAsync()),
+            ("Game Sessions", await context.GameSessions.CountAsync()),
+            ("Reports", await context.Reports.CountAsync()),
+            ("Key Moments", await context.KeyMoments.CountAsync()),
+        };
+    }
+}

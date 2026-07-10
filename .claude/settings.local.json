@@ -21,7 +21,14 @@
       "PowerShell(Get-Process -Id 21092 -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Process -Name \"BehavioralReportEngine.Web\" -ErrorAction SilentlyContinue)",
       "Bash(git init *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(dotnet add *)",
+      "PowerShell(Get-Process -Name dotnet -ErrorAction SilentlyContinue)",
+      "Bash(mkdir -p \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Services\" \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Components\\\\Layout\" \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Components\\\\Pages\" \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Components\\\\Shared\")",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -C -Q \"SELECT ReportId, ReportTitle FROM report.Report;\" -Q \"SELECT ReportId FROM report.Report;\" 2>&1)",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -C -Q \"SELECT LogoPath FROM core.Organization WHERE OrganizationId=3;\")",
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -C -Q \"DELETE FROM core.Department WHERE DepartmentCode='TEST1';\")"
     ]
   }
 }

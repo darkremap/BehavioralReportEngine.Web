@@ -1,0 +1,12 @@
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+    @foreach (var group in EntityRegistry.All.GroupBy(e => e.NavGroup))
+    {
+        <MudNavGroup Title="@group.Key" Expanded="false" Icon="@Icons.Material.Filled.Folder">
+            @foreach (var entity in group)
+            {
+                <MudNavLink Href="@($"/entities/{entity.Name}")">@entity.DisplayLabel</MudNavLink>
+            }
+        </MudNavGroup>
+    }
+</MudNavMenu>

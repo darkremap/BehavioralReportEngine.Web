@@ -1,9 +1,0 @@
-@{
-    ViewData["Title"] = "خطا";
-}
-<div class="alert alert-danger mt-4" role="alert">
-    <h4 class="alert-heading">مشکلی پیش آمد</h4>
-    <p>@(string.IsNullOrWhiteSpace(ViewBag.Message as string) ? "خطایی هنگام پردازش درخواست شما رخ داد. لطفاً دوباره تلاش کنید." : ViewBag.Message)</p>
-</div>
-<a href="javascript:history.back()" class="btn btn-secondary">بازگشت</a>
-<a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">صفحه اصلی</a>

@@ -1,0 +1,24 @@
+@page "/entities/{EntityName}/details/{Id}"
+
+@if (_componentType != null)
+{
+    <DynamicComponent Type="_componentType" Parameters="_parameters" />
+}
+else
+{
+    <MudText Color="Color.Error">Unknown entity: @EntityName</MudText>
+}
+
+@code {
+    [Parameter] public string EntityName { get; set; } = "";
+    [Parameter] public string Id { get; set; } = "";
+    private Type? _componentType;
+    private Dictionary<string, object?> _parameters = new();
+
+    protected override void OnParametersSet()
+    {
+        var reg = EntityRegistry.Resolve(EntityName);
+        _componentType = reg != null ? typeof(Shared.GenericEntityDetails<>).MakeGenericType(reg.ClrType) : null;
+        _parameters = new Dictionary<string, object?> { ["Id"] = Id };
+    }
+}

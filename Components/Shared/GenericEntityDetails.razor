@@ -1,0 +1,62 @@
+@typeparam TEntity where TEntity : class
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject EntityMetadataService MetadataService
+@using System.Globalization
+
+<MudText Typo="Typo.h5" Class="mb-4">@Registration.DisplayLabel Details</MudText>
+
+@if (_entity == null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudPaper Class="pa-4" MaxWidth="720px">
+        <MudSimpleTable Dense="true">
+            <tbody>
+                @foreach (var prop in _metadata!.Properties)
+                {
+                    <tr>
+                        <td><b>@prop.Name</b></td>
+                        <td>@FormatValue(prop)</td>
+                    </tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+
+        <MudStack Row="true" Spacing="2" Class="mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@($"/entities/{Registration.Name}/edit/{Id}")">Edit</MudButton>
+            <MudButton Variant="Variant.Text" Href="@($"/entities/{Registration.Name}")">Back to List</MudButton>
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    private EntityRegistration Registration => EntityRegistry.Resolve(typeof(TEntity).Name)!;
+    private EntityMetadata? _metadata;
+    private TEntity? _entity;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _metadata = MetadataService.GetMetadata(typeof(TEntity));
+        using var context = await DbFactory.CreateDbContextAsync();
+        var pkValue = Convert.ChangeType(Id, _metadata.PrimaryKeyClrType, CultureInfo.InvariantCulture);
+        _entity = (TEntity?)await context.FindAsync(typeof(TEntity), pkValue);
+    }
+
+    private string FormatValue(PropertyDescriptor prop)
+    {
+        var value = prop.ClrProperty.GetValue(_entity);
+        if (value == null) return "";
+        if (prop.IsForeignKey && prop.PrincipalType != null)
+        {
+            using var context = DbFactory.CreateDbContext();
+            var principal = context.Find(prop.PrincipalType, value);
+            if (principal != null)
+                return EntityMetadataService.GetDisplayText(principal, prop);
+        }
+        return value.ToString() ?? "";
+    }
+}

@@ -1,15 +1,24 @@
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 using BehavioralReportEngine.Web.Data;
-using BehavioralReportEngine.Web.Helpers;
+using BehavioralReportEngine.Web.Components;
+using BehavioralReportEngine.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MVC with views
-builder.Services.AddControllersWithViews();
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
-// EF Core - SQL Server, pointing at the database created by the schema script
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddMudServices();
+
+// AddDbContextFactory (not AddDbContext): in Blazor Server the DI-scoped instance would live
+// for the whole circuit (until the tab closes), causing stale-tracking bugs. Components create
+// a short-lived context per operation via IDbContextFactory<ApplicationDbContext>.
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSingleton<EntityMetadataService>();
+builder.Services.AddScoped<LogoUploadService>();
 
 var app = builder.Build();
 
@@ -19,36 +28,15 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseAntiforgery();
 
-app.UseRouting();
-
-app.UseAuthorization();
-
-// Data-validation errors (CHECK/UNIQUE/FK constraint violations) are expected user input
-// mistakes, not bugs - show a friendly message instead of the raw SQL exception. Placed after
-// UseRouting/UseAuthorization so it wraps MVC action execution directly, catching the exception
-// before it reaches the dev exception page / 500 handler registered above.
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (DbUpdateException ex)
-    {
-        var message = DbExceptionHelper.GetFriendlyMessage(ex);
-        context.Response.Redirect($"/Home/Error?message={Uri.EscapeDataString(message)}");
-    }
-});
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 
 app.Run();

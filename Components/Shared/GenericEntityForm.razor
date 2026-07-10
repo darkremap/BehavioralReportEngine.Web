@@ -1,0 +1,215 @@
+@typeparam TEntity where TEntity : class, new()
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject EntityMetadataService MetadataService
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject LogoUploadService LogoUploader
+@using System.Globalization
+@using Microsoft.AspNetCore.WebUtilities
+
+<MudText Typo="Typo.h5" Class="mb-4">@(IsEdit ? "Edit" : "Create") @Registration.DisplayLabel</MudText>
+
+@if (_metadata == null)
+{
+    <MudProgressCircular Indeterminate="true" />
+}
+else
+{
+    <MudPaper Class="pa-4" MaxWidth="720px">
+        <MudStack Spacing="3">
+            @foreach (var prop in _metadata.Properties)
+            {
+                @if (prop.Name == "LogoPath")
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        @if (!string.IsNullOrEmpty(_stringValues.GetValueOrDefault(prop.Name)))
+                        {
+                            <MudAvatar Square="true" Size="Size.Large">
+                                <MudImage Src="@_stringValues[prop.Name]" />
+                            </MudAvatar>
+                        }
+                        <MudFileUpload T="IBrowserFile" FilesChanged="@(f => OnLogoSelectedAsync(prop, f))">
+                            <ActivatorContent>
+                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Upload">Upload Logo</MudButton>
+                            </ActivatorContent>
+                        </MudFileUpload>
+                    </MudStack>
+                }
+                else if (prop.IsForeignKey)
+                {
+                    <MudSelect T="string" Label="@prop.Name" Value="@_stringValues.GetValueOrDefault(prop.Name, "")"
+                               ValueChanged="@(v => _stringValues[prop.Name] = v)" Required="@prop.IsRequired">
+                        @if (!prop.IsRequired)
+                        {
+                            <MudSelectItem Value="@("")">-- None --</MudSelectItem>
+                        }
+                        @foreach (var (id, label) in _fkOptions.GetValueOrDefault(prop.Name) ?? new())
+                        {
+                            <MudSelectItem Value="@id">@label</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+                else if (prop.ClrType == typeof(bool))
+                {
+                    <MudSwitch T="bool" Value="@_boolValues.GetValueOrDefault(prop.Name)"
+                               ValueChanged="@(v => _boolValues[prop.Name] = v)" Label="@prop.Name" Color="Color.Primary" />
+                }
+                else if (prop.ClrType == typeof(DateTime))
+                {
+                    <MudDatePicker Label="@prop.Name" Date="@_dateValues.GetValueOrDefault(prop.Name)"
+                                    DateChanged="@(v => _dateValues[prop.Name] = v)" Required="@prop.IsRequired" />
+                }
+                else if (prop.ClrType == typeof(int) || prop.ClrType == typeof(long) || prop.ClrType == typeof(decimal))
+                {
+                    <MudTextField T="string" Label="@prop.Name" InputType="InputType.Number"
+                                  Value="@_stringValues.GetValueOrDefault(prop.Name, "")"
+                                  ValueChanged="@(v => _stringValues[prop.Name] = v)" Required="@prop.IsRequired" />
+                }
+                else
+                {
+                    <MudTextField T="string" Label="@prop.Name" Lines="@(prop.MaxLength is null or > 300 ? 3 : 1)"
+                                  MaxLength="@(prop.MaxLength ?? int.MaxValue)"
+                                  Value="@_stringValues.GetValueOrDefault(prop.Name, "")"
+                                  ValueChanged="@(v => _stringValues[prop.Name] = v)" Required="@prop.IsRequired" />
+                }
+            }
+        </MudStack>
+
+        <MudStack Row="true" Spacing="2" Class="mt-4">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveAsync">Save</MudButton>
+            <MudButton Variant="Variant.Text" Href="@($"/entities/{Registration.Name}")">Cancel</MudButton>
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    private bool IsEdit => !string.IsNullOrEmpty(Id);
+    private EntityRegistration Registration => EntityRegistry.Resolve(typeof(TEntity).Name)!;
+    private EntityMetadata? _metadata;
+    private TEntity _entity = new();
+
+    private readonly Dictionary<string, string> _stringValues = new();
+    private readonly Dictionary<string, bool> _boolValues = new();
+    private readonly Dictionary<string, DateTime?> _dateValues = new();
+    private readonly Dictionary<string, List<(string Id, string Label)>> _fkOptions = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _metadata = MetadataService.GetMetadata(typeof(TEntity));
+
+        using var context = await DbFactory.CreateDbContextAsync();
+
+        if (IsEdit)
+        {
+            var pkValue = Convert.ChangeType(Id, _metadata.PrimaryKeyClrType, CultureInfo.InvariantCulture);
+            _entity = (TEntity?)await context.FindAsync(typeof(TEntity), pkValue) ?? new TEntity();
+        }
+
+        var query = QueryHelpers.ParseQuery(new Uri(Navigation.Uri).Query);
+
+        foreach (var prop in _metadata.Properties)
+        {
+            if (prop.IsForeignKey && prop.PrincipalType != null)
+            {
+                var principals = EntityMetadataService.GetAll(context, prop.PrincipalType);
+                var principalPk = context.Model.FindEntityType(prop.PrincipalType)!.FindPrimaryKey()!.Properties[0];
+                var principalPkProp = prop.PrincipalType.GetProperty(principalPk.Name)!;
+                _fkOptions[prop.Name] = principals
+                    .Select(p => (Id: principalPkProp.GetValue(p)?.ToString() ?? "", Label: EntityMetadataService.GetDisplayText(p, prop)))
+                    .OrderBy(x => x.Label)
+                    .ToList();
+            }
+
+            var currentValue = prop.ClrProperty.GetValue(_entity);
+
+            if (!IsEdit && query.TryGetValue(prop.Name, out var queryValue))
+            {
+                _stringValues[prop.Name] = queryValue.ToString();
+            }
+            else if (prop.ClrType == typeof(bool))
+            {
+                _boolValues[prop.Name] = currentValue is bool b && b;
+            }
+            else if (prop.ClrType == typeof(DateTime))
+            {
+                _dateValues[prop.Name] = currentValue as DateTime?;
+            }
+            else if (IsEdit)
+            {
+                _stringValues[prop.Name] = currentValue?.ToString() ?? "";
+            }
+            else if (prop.IsForeignKey || prop.ClrType == typeof(int) || prop.ClrType == typeof(long) || prop.ClrType == typeof(decimal))
+            {
+                // New entity: CLR default (0) isn't a meaningful value to pre-fill for a
+                // required numeric/FK field, leave blank so the user must pick one.
+                _stringValues[prop.Name] = "";
+            }
+            else
+            {
+                _stringValues[prop.Name] = currentValue?.ToString() ?? "";
+            }
+        }
+    }
+
+    private async Task OnLogoSelectedAsync(PropertyDescriptor prop, IBrowserFile file)
+    {
+        var path = await LogoUploader.SaveAsync(file);
+        _stringValues[prop.Name] = path;
+    }
+
+    private object? ParseScalar(PropertyDescriptor prop, string? raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return null;
+        if (prop.ClrType == typeof(int)) return int.Parse(raw, CultureInfo.InvariantCulture);
+        if (prop.ClrType == typeof(long)) return long.Parse(raw, CultureInfo.InvariantCulture);
+        if (prop.ClrType == typeof(decimal)) return decimal.Parse(raw, CultureInfo.InvariantCulture);
+        return raw;
+    }
+
+    private async Task SaveAsync()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+
+        object entity;
+        if (IsEdit)
+        {
+            var pkValue = Convert.ChangeType(Id, _metadata!.PrimaryKeyClrType, CultureInfo.InvariantCulture);
+            entity = (await context.FindAsync(typeof(TEntity), pkValue))!;
+        }
+        else
+        {
+            entity = new TEntity();
+        }
+
+        foreach (var prop in _metadata!.Properties)
+        {
+            object? value;
+            if (prop.ClrType == typeof(bool))
+                value = _boolValues.GetValueOrDefault(prop.Name);
+            else if (prop.ClrType == typeof(DateTime))
+                value = _dateValues.GetValueOrDefault(prop.Name);
+            else
+                value = ParseScalar(prop, _stringValues.GetValueOrDefault(prop.Name));
+
+            prop.ClrProperty.SetValue(entity, value);
+        }
+
+        if (!IsEdit)
+            context.Add(entity);
+        else
+            context.Update(entity);
+
+        try
+        {
+            await context.SaveChangesAsync();
+            Snackbar.Add("Saved.", Severity.Success);
+            Navigation.NavigateTo($"/entities/{Registration.Name}");
+        }
+        catch (DbUpdateException ex)
+        {
+            Snackbar.Add(Helpers.DbExceptionHelper.GetFriendlyMessage(ex), Severity.Error);
+        }
+    }
+}

@@ -1,0 +1,25 @@
+@inherits LayoutComponentBase
+
+<HeadContent>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <style>
+        @@page { size: A4; margin: 0; }
+        * { box-sizing: border-box; }
+        body { font-family: 'Vazirmatn', Tahoma, sans-serif; margin: 0; background: #ececec; color: #1b2a33; }
+        .print-toolbar { position: sticky; top: 0; z-index: 10; background: #1b4332; color: #fff; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .print-toolbar button { background: #2a9d8f; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-family: inherit; font-size: 14px; cursor: pointer; }
+        .report-page { width: 210mm; min-height: 297mm; margin: 16px auto; background: #fff; padding: 14mm 12mm; page-break-after: always; position: relative; }
+        .report-page:last-child { page-break-after: auto; }
+        @@media print { body { background: #fff; } .print-toolbar { display: none; } .report-page { margin: 0; box-shadow: none; } }
+    </style>
+</HeadContent>
+
+<div dir="rtl">
+    <div class="print-toolbar">
+        <span>پیش‌نمایش گزارش</span>
+        <button onclick="window.print()">چاپ / ذخیره PDF</button>
+    </div>
+    @Body
+</div>
