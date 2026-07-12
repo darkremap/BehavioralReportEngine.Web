@@ -25,9 +25,26 @@ else
         <Columns>
             @foreach (var prop in _metadata.Properties)
             {
-                <TemplateColumn Title="@prop.Name" Sortable="true" SortBy="@(GetSortSelector(prop))">
-                    <CellTemplate>@FormatValue(context.Item, prop)</CellTemplate>
-                </TemplateColumn>
+                @if (prop.Name == "LogoPath")
+                {
+                    <TemplateColumn Title="@prop.Name" Sortable="false">
+                        <CellTemplate>
+                            @{ var logoUrl = (string?)prop.ClrProperty.GetValue(context.Item); }
+                            @if (!string.IsNullOrEmpty(logoUrl))
+                            {
+                                <MudAvatar Square="true" Size="Size.Medium">
+                                    <MudImage Src="@logoUrl" ObjectFit="ObjectFit.Contain" />
+                                </MudAvatar>
+                            }
+                        </CellTemplate>
+                    </TemplateColumn>
+                }
+                else
+                {
+                    <TemplateColumn Title="@prop.Name" Sortable="true" SortBy="@(GetSortSelector(prop))">
+                        <CellTemplate>@FormatValue(context.Item, prop)</CellTemplate>
+                    </TemplateColumn>
+                }
             }
             <TemplateColumn Title="" Sortable="false">
                 <CellTemplate>

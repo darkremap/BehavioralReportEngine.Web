@@ -18,7 +18,18 @@ else
                 {
                     <tr>
                         <td><b>@prop.Name</b></td>
-                        <td>@FormatValue(prop)</td>
+                        <td>
+                            @if (prop.Name == "LogoPath" && !string.IsNullOrEmpty((string?)prop.ClrProperty.GetValue(_entity)))
+                            {
+                                <MudAvatar Square="true" Size="Size.Large">
+                                    <MudImage Src="@((string?)prop.ClrProperty.GetValue(_entity))" ObjectFit="ObjectFit.Contain" />
+                                </MudAvatar>
+                            }
+                            else
+                            {
+                                @FormatValue(prop)
+                            }
+                        </td>
                     </tr>
                 }
             </tbody>
