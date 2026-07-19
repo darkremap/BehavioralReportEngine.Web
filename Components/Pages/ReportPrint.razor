@@ -127,6 +127,12 @@ else
         .growth-col-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .growth-col-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #fff; flex-shrink: 0; }
         .growth-col h4 { font-size: 14px; margin: 0; }
+        .growth-col-caption { font-size: 11px; color: #99a; margin: 2px 0 10px; }
+        .growth-col-divider { width: 100%; height: 1px; background: #e3ece9; margin-bottom: 10px; }
+        .growth-col-footer { display: flex; align-items: flex-start; gap: 6px; margin-top: 12px; padding: 10px; border-radius: 8px; font-size: 10.5px; line-height: 1.6; }
+        .growth-col-footer.tone-green { background: #eaf6f4; color: #1b4332; }
+        .growth-col-footer.tone-blue { background: #eaf3fb; color: #2c5d82; }
+        .growth-col-footer.tone-orange { background: #fdf0e9; color: #a15326; }
         .growth-entry { font-size: 12px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px dashed #ddd; }
         .growth-entry .area { font-weight: 700; }
         .priority-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
@@ -533,54 +539,130 @@ else
     @if (_model.GrowthMapEntries.Any() || _model.ActionPlanItems.Any())
     {
         pageNumber++;
+        var overallIndAvg = _model.IndicatorScores.Any() ? _model.IndicatorScores.Average(s => s.ScoreValue) : 0;
+        var overallIndMax = _model.IndicatorScores.Any() ? _model.IndicatorScores.Max(s => s.ScoringScale?.MaxValue ?? 5m) : 5m;
+        var overallLevel = ReportPrintViewModel.GetLevel(overallIndAvg, overallIndMax);
+        var (overallLevelLabel, overallLevelColor) = ReportPrintViewModel.GetLevelInfo(overallLevel);
+        var overallFilledDots = overallIndMax > 0 ? (int)Math.Round((overallIndAvg / overallIndMax) * 5m) : 0;
+        var overallPct = overallIndMax > 0 ? (double)(overallIndAvg / overallIndMax) * 100 : 0;
+        var finalSummaryText = _model.PatternScores.FirstOrDefault(p => p.IsDominantPattern && !string.IsNullOrWhiteSpace(p.Description))?.Description
+            ?? _model.PatternScores.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.Description))?.Description;
         <div class="report-page">
             <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span class="page-num">@pageNumber.ToString("00")</span></div>
             <h1 class="page-title">نقشه رشد</h1>
-            <p class="page-desc">با توجه به تحلیل رفتارهای @participantName در این جلسه، مسیر رشد در بخش‌های زیر خلاصه شده است.</p>
-            @if (_model.GrowthMapEntries.Any())
-            {
-                <div class="growth-cols">
-                    @foreach (var g in _model.GrowthMapEntries)
+            <p class="page-desc">با توجه به تحلیل رفتارهای @participantName در این جلسه، مسیر رشد در بخش‌های زیر خلاصه شده است. از این نقشه برای تقویت نقاط قوت و رشد هدفمند استفاده کنید.</p>
+
+            <div class="indicator-layout">
+                <div class="pattern-aside">
+                    <div class="pattern-aside-content">
+                        <div class="indicator-icon-circle">🧭</div>
+                        <h2>نقشه رشد</h2>
+                        <div class="aside-divider"></div>
+                        <div class="score-caption">امتیاز شما</div>
+                        <div class="score">@overallIndAvg.ToString("0.0") <small>/@overallIndMax.ToString("0.#")</small></div>
+                        <div class="score-bar-track"><div class="score-bar-fill" style="width:@(overallPct)%;"></div></div>
+                        <div class="dots">
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                <span class="@(i < overallFilledDots ? "dot filled" : "dot")"></span>
+                            }
+                        </div>
+                        <div class="score-caption" style="margin-top:10px;">سطح کلی</div>
+                        <div class="level-plain" style="color:@overallLevelColor;">@overallLevelLabel</div>
+                        <div class="indicator-quote-box">
+                            <div class="quote-mark">❝</div>
+                            <p>رشد، یک مسیر مداوم است. با تمرکز بر آگاهی، تمرین و بازخورد، هر تعامل شما را یک قدم به نسخه بهتر خود نزدیک‌تر می‌کند.</p>
+                        </div>
+                        <div class="info-callout" style="max-width:none; margin-top:14px;">
+                            <span>ℹ️</span>
+                            <span>این نقشه بر اساس مشاهده رفتارهای شما در طول این جلسه تهیه شده است و می‌تواند در تعاملات آینده به‌روز شود.</span>
+                        </div>
+                    </div>
+                    <svg class="pattern-aside-waves" viewBox="0 0 800 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0,120 C150,180 300,60 450,110 C600,160 700,90 800,130 L800,220 L0,220 Z" fill="#eaf6f4" />
+                        <path d="M0,150 C180,90 320,190 500,140 C650,100 720,170 800,150 L800,220 L0,220 Z" fill="#d7efec" />
+                        <path d="M0,180 C200,140 350,210 550,170 C680,145 730,200 800,180 L800,220 L0,220 Z" fill="#2a9d8f" opacity="0.35" />
+                    </svg>
+                </div>
+
+                <div class="indicator-main">
+                    @if (_model.GrowthMapEntries.Any())
                     {
-                        var (gIcon, gColor) = ReportPrintViewModel.GetGrowthColumnStyle(g.Area);
-                        <div class="growth-col" style="border-top-color:@gColor;">
-                            <div class="growth-col-header">
-                                <div class="growth-col-icon" style="background:@gColor;">@gIcon</div>
-                                <h4>@g.Area</h4>
+                        <div class="growth-cols">
+                            @foreach (var g in _model.GrowthMapEntries)
+                            {
+                                var (gIcon, gColor) = ReportPrintViewModel.GetGrowthColumnStyle(g.Area);
+                                var gCaption = ReportPrintViewModel.GetGrowthColumnCaption(g.Area);
+                                var (fIcon, fTone, fText) = ReportPrintViewModel.GetGrowthColumnFooter(g.Area);
+                                var growthLines = new[] { g.CurrentState, g.TargetState }
+                                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                                    .SelectMany(s => s!.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                                    .Select(s => s.Trim())
+                                    .ToList();
+                                <div class="growth-col" style="border-top-color:@gColor;">
+                                    <div class="growth-col-header">
+                                        <div class="growth-col-icon" style="background:@gColor;">@gIcon</div>
+                                        <h4>@g.Area</h4>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(gCaption))
+                                    {
+                                        <div class="growth-col-caption">@gCaption</div>
+                                    }
+                                    <div class="growth-col-divider"></div>
+                                    @if (growthLines.Any())
+                                    {
+                                        <ul class="growth-list">
+                                            @foreach (var line in growthLines)
+                                            {
+                                                <li>@line</li>
+                                            }
+                                        </ul>
+                                    }
+                                    <div class="growth-col-footer @fTone">
+                                        <span>@fIcon</span>
+                                        <span>@fText</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    @if (_model.ActionPlanItems.Any())
+                    {
+                        <div class="card-box" style="margin-top:20px;">
+                            <h3>✅ برنامه اقدام</h3>
+                            @foreach (var a in _model.ActionPlanItems)
+                            {
+                                <div class="growth-entry">
+                                    <span class="priority-badge priority-@(a.Priority ?? "Medium")">@a.Priority</span>
+                                    @a.ActionDescription
+                                    @if (!string.IsNullOrWhiteSpace(a.TimeFrame))
+                                    {
+                                        <span style="color:#999;font-size:11px;"> (@a.TimeFrame)</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(finalSummaryText))
+                    {
+                        <div class="card-box" style="margin-top:20px; display:flex; align-items:flex-start; gap:16px;">
+                            <div class="summary-icon-box">📋</div>
+                            <div>
+                                <h3 style="margin-bottom:6px;">جمع‌بندی نهایی</h3>
+                                <p style="font-size:13px;">@finalSummaryText</p>
                             </div>
-                            @if (!string.IsNullOrWhiteSpace(g.CurrentState))
-                            {
-                                <div class="growth-entry"><span class="area">وضعیت فعلی:</span> @g.CurrentState</div>
-                            }
-                            @if (!string.IsNullOrWhiteSpace(g.TargetState))
-                            {
-                                <div class="growth-entry"><span class="area">هدف:</span> @g.TargetState</div>
-                            }
                         </div>
                     }
-                </div>
-            }
-            @if (_model.ActionPlanItems.Any())
-            {
-                <div class="card-box" style="margin-top:20px;">
-                    <h3>✅ برنامه اقدام</h3>
-                    @foreach (var a in _model.ActionPlanItems)
-                    {
-                        <div class="growth-entry">
-                            <span class="priority-badge priority-@(a.Priority ?? "Medium")">@a.Priority</span>
-                            @a.ActionDescription
-                            @if (!string.IsNullOrWhiteSpace(a.TimeFrame))
-                            {
-                                <span style="color:#999;font-size:11px;"> (@a.TimeFrame)</span>
-                            }
+                    <div class="card-box" style="margin-top:20px; display:flex; align-items:flex-start; gap:16px;">
+                        <div class="summary-icon-box">💬</div>
+                        <div>
+                            <h3 style="margin-bottom:6px;">پیام نهایی سلوا</h3>
+                            <p style="font-size:13px;">هر گفتگو فرصتی است برای شناخت بهتر خود و دیگران. با آگاهی، تمرین و بازخورد مستمر، می‌توانید در هر تعامل یک قدم به نسخه بهتر خود نزدیک‌تر شوید.</p>
                         </div>
-                    }
+                    </div>
                 </div>
-            }
-            <div class="card-box" style="margin-top:20px;">
-                <h3>💬 پیام نهایی</h3>
-                <p style="font-size:13px;">هر گفتگو فرصتی است برای شناخت بهتر خود و دیگران. با آگاهی، تمرین و بازخورد مستمر، می‌توانید در هر تعامل یک قدم به نسخه بهتر خود نزدیک‌تر شوید.</p>
             </div>
+
             <div class="page-footer"><span class="brand">ANA — Behavior Intelligence</span><span>@reportCode</span></div>
         </div>
     }

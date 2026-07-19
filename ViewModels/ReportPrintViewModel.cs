@@ -133,6 +133,30 @@ namespace BehavioralReportEngine.Web.ViewModels
             if (text.Contains("مراقب")) return ("\U000026A0", "#e76f51");
             return ("\U0001F3AF", "#457b9d");
         }
+
+        public static string GetGrowthColumnCaption(string area)
+        {
+            var text = area ?? "";
+            if (text.Contains("ادامه")) return "نقاط قوت شما";
+            if (text.Contains("تمرین")) return "ظرفیت‌های قابل رشد";
+            if (text.Contains("مراقب")) return "چالش‌های احتمالی";
+            return "";
+        }
+
+        // Static encouragement note shown at the bottom of each growth-map column, matched the
+        // same way as GetGrowthColumnStyle since the tone/message is tied to the column type,
+        // not any per-report data.
+        public static (string Icon, string Tone, string Text) GetGrowthColumnFooter(string area)
+        {
+            var text = area ?? "";
+            if (text.Contains("ادامه"))
+                return ("\U00002705", "tone-green", "این رفتارها به خوبی در شما مشاهده شدند. ادامه آن‌ها باعث حفظ و تقویت اثرگذاری شما خواهد شد.");
+            if (text.Contains("تمرین"))
+                return ("\U0001F3AF", "tone-blue", "با تمرین هدفمند، این نقاط به قوت‌های پایدار تبدیل می‌شوند.");
+            if (text.Contains("مراقب"))
+                return ("\U000026A0", "tone-orange", "با آگاهی و کنترل این موارد، اثرگذاری شما پایدارتر می‌شود.");
+            return ("\U00002139", "tone-blue", "این بخش به شما کمک می‌کند مسیر رشد خود را بهتر بشناسید.");
+        }
     }
 
     public enum ScoreLevel
