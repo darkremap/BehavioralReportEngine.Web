@@ -81,6 +81,218 @@ else
         .priority-Low { background: #e6f4ea; color: #2a9d8f; }
         .page-footer { position: absolute; bottom: 10mm; left: 12mm; right: 12mm; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #aab; border-top: 1px solid #f0f0f0; padding-top: 8px; }
         .page-footer .brand { letter-spacing: 2px; font-weight: 700; color: #9aa; text-transform: uppercase; }
+
+        /* === استایل‌های جدید برای سکشن شاخص‌های کلیدی === */
+        .indicator-page-title {
+            font-size: 26px;
+            color: #14213d;
+            margin: 0 0 6px;
+            border-right: 5px solid #2a9d8f;
+            padding-right: 16px;
+            line-height: 1.4;
+        }
+
+        .indicator-page-desc {
+            color: #556;
+            font-size: 13px;
+            max-width: 640px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .info-callout-premium {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: linear-gradient(135deg, #f0faf8 0%, #e8f5f3 100%);
+            border: 1px solid #c8e6e2;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 11.5px;
+            color: #1b4332;
+            max-width: 240px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(42,157,143,0.06);
+            line-height: 1.7;
+        }
+
+            .info-callout-premium .callout-icon {
+                font-size: 20px;
+                flex-shrink: 0;
+                margin-top: 1px;
+            }
+
+        .radar-wrap-premium {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 24px;
+            background: radial-gradient(circle at center, #f8fcfb 0%, #ffffff 70%);
+            border-radius: 24px;
+            padding: 30px 20px 20px;
+        }
+
+            .radar-wrap-premium canvas {
+                max-width: 460px;
+                max-height: 460px;
+            }
+
+        .legend-row-premium {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .legend-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f7fafa;
+            border: 1px solid #e7efee;
+            border-radius: 20px;
+            padding: 5px 14px 5px 8px;
+            font-size: 11px;
+            color: #334;
+            font-weight: 500;
+        }
+
+        .legend-dot-premium {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.8) inset;
+        }
+        /* === لایه‌بندی پیشرفته رادار با آیکن و لیبل === */
+        .radar-detailed-layout {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        /* فریم نگهدارنده نمودار */
+        .chart-frame {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        /* نشانگر شیشه‌ای مرکز نمودار (امتیاز کل) */
+        .central-score-badge {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(6px);
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(27, 67, 50, 0.12);
+            border: 2px solid #e7efee;
+            z-index: 10;
+        }
+
+            .central-score-badge .score-val {
+                font-size: 28px;
+                font-weight: 900;
+                color: #1b4332;
+                line-height: 1;
+            }
+
+            .central-score-badge .score-label {
+                font-size: 9px;
+                color: #888;
+                margin-top: 4px;
+                font-weight: 600;
+            }
+
+        /* پنل لیست جزئیات (کنار نمودار) */
+        .details-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #f9fcfb;
+            border: 1px solid #eef3f2;
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.2s;
+        }
+
+        .detail-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eaf6f4, #d9f0ec);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .detail-info {
+            flex: 1;
+        }
+
+        .detail-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1b2a33;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .detail-bar-track {
+            width: 100%;
+            height: 6px;
+            background: #e7efee;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .detail-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #2a9d8f, #1b4332);
+        }
+
+        .detail-score-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: #2a9d8f;
+            min-width: 40px;
+            text-align: left;
+        }
+
+        /* === عنوان/زیرنویس صفحه رادار و نوار طیف رنگی پایین آن === */
+        .radar-section-centered { display: flex; flex-direction: column; }
+        .radar-title-elva { font-size: 26px; color: #14213d; margin: 0 0 6px; }
+        .radar-subtitle-elva { color: #667; font-size: 13px; max-width: 640px; margin-bottom: 10px; }
+        .radar-wrap-elva { display: flex; justify-content: center; }
+        .scale-bar-container { margin-top: 20px; }
+        .scale-bar-track { display: flex; height: 10px; border-radius: 6px; overflow: hidden; }
+        .scale-segment { flex: 1; }
+        .seg-1 { background: #e63946; }
+        .seg-2 { background: #f4a261; }
+        .seg-3 { background: #e9c46a; }
+        .seg-4 { background: #2a9d8f; }
+        .seg-5 { background: #1b4332; }
+        .scale-labels-row { display: flex; margin-top: 8px; }
+        .scale-label-item { flex: 1; text-align: center; display: flex; flex-direction: column; font-size: 10px; color: #667; }
+        .scale-label-item .num-range { font-weight: 700; color: #334; }
+        .scale-label-item .text-desc { color: #889; }
     </style>
 
     <div class="report-page cover-page">
@@ -109,28 +321,86 @@ else
 
     @if (_model.IndicatorScores.Any())
     {
+        _overallScore = (double)_model.IndicatorScores.Average(i => i.ScoreValue);
+
         pageNumber++;
         <div class="report-page">
-            <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span class="page-num">@pageNumber.ToString("00")</span></div>
-            <div class="radar-page-top">
-                <div>
-                    <h1 class="page-title">نقشه شاخص‌های کلیدی @participantName</h1>
-                    <p class="page-desc">این نمودار خلاصه‌ای از الگوی تعاملی @participantName در این تجربه است. هر شاخص نشان‌دهنده یک بعد کلیدی از رفتار است.</p>
+            <div class="page-header">
+                <span>@gameName | گزارش مشاهده رفتاری</span>
+                <span class="page-num">@pageNumber.ToString("00")</span>
+            </div>
+
+            <div class="radar-section-centered" style="align-items: flex-start; text-align: right;">
+                <h1 class="radar-title-elva" style="border: none; padding: 0; text-align: right; width: 100%;">
+                    نقشه شاخص‌های کلیدی @participantName
+                </h1>
+                <p class="radar-subtitle-elva" style="text-align: right; width: 100%;">
+                    تحلیل جزئی عملکرد در هر بعد رفتاری همراه با مقایسه بصری.
+                </p>
+
+                <div class="radar-detailed-layout">
+                    <!-- ستون راست: نمودار -->
+                    <div class="chart-frame">
+                        <!-- نشانگر مرکزی -->
+                        <div class="central-score-badge">
+                            <span class="score-val">@_overallScore.ToString("0.0")</span>
+                            <span class="score-label">EMTIAZ KOL</span>
+                        </div>
+                        <div class="radar-wrap-elva">
+                            <canvas id="radarChart" width="360" height="360"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ستون چپ: لیبل ها و آیکن ها -->
+                    <div class="details-panel">
+                        @foreach (var item in _model.IndicatorScores)
+                        {
+                            var itemName = item.IndicatorDefinition?.Title ?? "";
+                            var itemScore = item.ScoreValue;
+                            var itemMax = item.ScoringScale?.MaxValue ?? 5m;
+                            var percent = (double)(itemScore / itemMax) * 100;
+
+                            <div class="detail-item">
+                                <div class="detail-icon-box">
+                                    @GetIcon(itemName)
+                                </div>
+                                <div class="detail-info">
+                                    <span class="detail-name">@itemName</span>
+                                    <div class="detail-bar-track">
+                                        <div class="detail-bar-fill" style="width: @percent%;"></div>
+                                    </div>
+                                </div>
+                                <div class="detail-score-val">
+                                    @itemScore.ToString("0.0")
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
-                <div class="info-callout">
-                    <span>ℹ️</span>
-                    <span>این نتایج بر اساس مشاهده رفتار @participantName در یک تجربه گروهی واقعی تهیه شده است.</span>
+
+                <!-- نوار طیف رنگی -->
+                <div class="scale-bar-container" style="margin-top: 10px;">
+                    <div class="scale-bar-track">
+                        <div class="scale-segment seg-1"></div>
+                        <div class="scale-segment seg-2"></div>
+                        <div class="scale-segment seg-3"></div>
+                        <div class="scale-segment seg-4"></div>
+                        <div class="scale-segment seg-5"></div>
+                    </div>
+                    <div class="scale-labels-row">
+                        <div class="scale-label-item"><span class="num-range">۱ - ۱.۹</span><span class="text-desc">نیاز به توجه</span></div>
+                        <div class="scale-label-item"><span class="num-range">۲ - ۲.۹</span><span class="text-desc">نیاز به رشد</span></div>
+                        <div class="scale-label-item"><span class="num-range">۳ - ۳.۸</span><span class="text-desc">متوسط</span></div>
+                        <div class="scale-label-item"><span class="num-range">۳.۹ - ۴.۵</span><span class="text-desc">خوب</span></div>
+                        <div class="scale-label-item"><span class="num-range">۴.۶ - ۵</span><span class="text-desc">بسیار قوی</span></div>
+                    </div>
                 </div>
             </div>
-            <div class="radar-wrap"><canvas id="radarChart" width="440" height="440"></canvas></div>
-            <div class="legend-row">
-                <span><span class="legend-dot" style="background:#e63946"></span>نیاز به توجه</span>
-                <span><span class="legend-dot" style="background:#f4a261"></span>نیاز به رشد</span>
-                <span><span class="legend-dot" style="background:#e9c46a"></span>متوسط</span>
-                <span><span class="legend-dot" style="background:#2a9d8f"></span>خوب</span>
-                <span><span class="legend-dot" style="background:#1b4332"></span>بسیار قوی</span>
+
+            <div class="page-footer">
+                <span class="brand">ANA PLAY GROUP</span>
+                <span>@reportCode</span>
             </div>
-            <div class="page-footer"><span class="brand">ANA — Behavior Intelligence</span><span>@reportCode</span></div>
         </div>
     }
 
@@ -315,6 +585,20 @@ else
 @code {
     [Parameter] public long Id { get; set; }
     private ReportPrintViewModel? _model;
+    private double _overallScore;
+
+    private string GetIcon(string name)
+    {
+        if (name.Contains("ارتباط") || name.Contains("گفتگو")) return "🗣️";
+        if (name.Contains("حل مسئله") || name.Contains("تحلیل")) return "🧩";
+        if (name.Contains("خلاقیت") || name.Contains("ایده")) return "💡";
+        if (name.Contains("رهبری") || name.Contains("مدیریتی")) return "👑";
+        if (name.Contains("همکاری") || name.Contains("تیم")) return "🤝";
+        if (name.Contains("انگیزه") || name.Contains("علاقه")) return "🔥";
+        if (name.Contains("شناخت") || name.Contains("خودآگاهی")) return "🧠";
+        if (name.Contains("استرس") || name.Contains("کنترل")) return "🧘‍♂️";
+        return "📊";
+    }
 
     private string ChartScript
     {
