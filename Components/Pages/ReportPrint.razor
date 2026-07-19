@@ -27,9 +27,12 @@ else
         .cover-subtitle { font-size: 20px; font-weight: 600; color: #223; margin-bottom: 2px; }
         .cover-subtitle-en { font-size: 12px; letter-spacing: 3px; color: #999; text-transform: uppercase; margin-bottom: 40px; }
         .cover-info { width: 100%; max-width: 480px; text-align: right; margin-top: 20px; position: relative; z-index: 2; }
-        .cover-info-row { display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; padding: 10px 4px; font-size: 15px; }
-        .cover-info-row .label { color: #888; }
-        .cover-info-row .value { font-weight: 600; color: #1b2a33; }
+        .cover-info-row { display: flex; align-items: center; gap: 10px; padding: 14px 4px; }
+        .cover-info-row .row-icon { width: 22px; height: 22px; color: #1b4332; flex-shrink: 0; }
+        .cover-info-row .row-icon svg { width: 100%; height: 100%; }
+        .cover-info-row .label { color: #1b4332; font-weight: 600; font-size: 15px; white-space: nowrap; }
+        .cover-info-row .row-sep { width: 1px; height: 16px; background: #d8dde0; flex-shrink: 0; }
+        .cover-info-row .value { flex: 1; font-weight: 700; color: #14213d; font-size: 15px; border-bottom: 1px dotted #ccc; padding-bottom: 8px; }
         .cover-footer-note { margin-top: auto; font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 14px; position: relative; z-index: 2; max-width: 480px; }
         .cover-waves { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: auto; z-index: 1; opacity: 0.9; }
         .page-header { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #1b4332; font-weight: 700; border-bottom: 2px solid #eef4f2; padding-bottom: 10px; margin-bottom: 20px; }
@@ -114,93 +117,121 @@ else
         <div class="cover-subtitle">گزارش مشاهده رفتاری</div>
         <div class="cover-subtitle-en">BEHAVIORAL OBSERVATION REPORT</div>
         <div class="cover-info">
-            <div class="cover-info-row"><span class="label">نام فرد</span><span class="value">@participantName</span></div>
-            <div class="cover-info-row"><span class="label">سازمان</span><span class="value">@(report.Organization?.Name ?? "-")</span></div>
-            <div class="cover-info-row"><span class="label">تاریخ اجرا</span><span class="value">@reportDate</span></div>
-            <div class="cover-info-row"><span class="label">کد گزارش</span><span class="value">@reportCode</span></div>
+            <div class="cover-info-row">
+                <span class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>
+                </span>
+                <span class="label">نام فرد</span>
+                <span class="row-sep"></span>
+                <span class="value">@participantName</span>
+            </div>
+            <div class="cover-info-row">
+                <span class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 8h1M14 8h1M9 12h1M14 12h1M9 16h1M14 16h1"/></svg>
+                </span>
+                <span class="label">سازمان</span>
+                <span class="row-sep"></span>
+                <span class="value">@(report.Organization?.Name ?? "-")</span>
+            </div>
+            <div class="cover-info-row">
+                <span class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                </span>
+                <span class="label">تاریخ اجرا</span>
+                <span class="row-sep"></span>
+                <span class="value">@reportDate</span>
+            </div>
+            <div class="cover-info-row">
+                <span class="row-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M8 13h8M8 17h8"/></svg>
+                </span>
+                <span class="label">کد گزارش</span>
+                <span class="row-sep"></span>
+                <span class="value">@reportCode</span>
+            </div>
         </div>
         <div class="cover-footer-note">
             این گزارش بر اساس مشاهده رفتار در یک تجربه گروهی تهیه شده و به منزله تشخیص شخصیت یا ارزیابی روان‌شناختی نیست.
         </div>
     </div>
 
-@if (_model.IndicatorScores.Any())
-{
-    pageNumber++;
-    var overviewCount = _model.IndicatorScores.Count;
-    var overviewSummary = _model.DominantPatterns.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.Description))?.Description;
-    <div class="report-page">
-        <div class="page-header">
-            <span>@gameName | گزارش مشاهده رفتاری</span>
-            <span class="page-num">@pageNumber.ToString("00")</span>
-        </div>
-        <div class="section-accent"></div>
-        <div class="radar-page-top">
-            <div>
-                <h1 class="page-title">نقشه پنج شاخص کلیدی @participantName</h1>
-                <p class="page-desc">این نمودار خلاصه‌ای از الگوی تعاملی @participantName در این تجربه گروهی است. هر شاخص نشان‌دهنده یک بعد کلیدی از رفتار @participantName است.</p>
+    @if (_model.IndicatorScores.Any())
+    {
+        pageNumber++;
+        var overviewCount = _model.IndicatorScores.Count;
+        var overviewSummary = _model.DominantPatterns.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.Description))?.Description;
+        <div class="report-page">
+            <div class="page-header">
+                <span>@gameName | گزارش مشاهده رفتاری</span>
+                <span class="page-num">@pageNumber.ToString("00")</span>
             </div>
-            <div class="info-callout">
-                <span>ℹ️</span>
-                <span>این نتایج بر اساس مشاهده رفتار @participantName در یک تجربه گروهی واقعی تهیه شده است.</span>
-            </div>
-        </div>
-
-        <div class="radar-chart-container">
-            <canvas id="radarChart" width="420" height="420"></canvas>
-            @foreach (var (s, vi) in _model.IndicatorScores.Select((s, idx) => (s, idx)))
-            {
-                var angle = -Math.PI / 2 + vi * (2 * Math.PI / overviewCount);
-                var vx = (50 + 46 * Math.Cos(angle)).ToString("0.##", CultureInfo.InvariantCulture);
-                var vy = (50 + 46 * Math.Sin(angle)).ToString("0.##", CultureInfo.InvariantCulture);
-                var vIcon = ReportPrintViewModel.GetIndicatorIcon(s.IndicatorDefinition?.IndicatorCode, s.IndicatorDefinition?.Title);
-                var vMax = s.ScoringScale?.MaxValue ?? 5m;
-                <div class="radar-vertex" style="left:@(vx)%; top:@(vy)%;">
-                    <div class="radar-vertex-icon">@vIcon</div>
-                    <div class="radar-vertex-name">@s.IndicatorDefinition?.Title</div>
-                    <div class="radar-vertex-score">@s.ScoreValue.ToString("0.0")<small>/@vMax.ToString("0.#")</small></div>
+            <div class="section-accent"></div>
+            <div class="radar-page-top">
+                <div>
+                    <h1 class="page-title">نقشه پنج شاخص کلیدی @participantName</h1>
+                    <p class="page-desc">این نمودار خلاصه‌ای از الگوی تعاملی @participantName در این تجربه گروهی است. هر شاخص نشان‌دهنده یک بعد کلیدی از رفتار @participantName است.</p>
                 </div>
-            }
-        </div>
+                <div class="info-callout">
+                    <span>ℹ️</span>
+                    <span>این نتایج بر اساس مشاهده رفتار @participantName در یک تجربه گروهی واقعی تهیه شده است.</span>
+                </div>
+            </div>
 
-        <div class="legend-card">
-            @{
-                var buckets = new (string Range, string Label, string Color)[]
+            <div class="radar-chart-container">
+                <canvas id="radarChart" width="420" height="420"></canvas>
+                @foreach (var (s, vi) in _model.IndicatorScores.Select((s, idx) => (s, idx)))
                 {
-                    ("1 - 1.9", "نیاز به توجه", "#e63946"),
-                    ("2 - 2.9", "نیاز به رشد", "#f4a261"),
-                    ("3 - 3.9", "متوسط", "#e9c46a"),
-                    ("4 - 4.5", "خوب", "#2a9d8f"),
-                    ("4.6 - 5", "بسیار قوی", "#1b4332"),
-                };
-            }
-            @for (int b = 0; b < buckets.Length; b++)
-            {
-                var bucket = buckets[b];
-                <div class="legend-col">
-                    <div class="legend-range">@bucket.Range</div>
-                    <div class="legend-dots">
-                        @for (int d = 0; d < 4; d++)
-                        {
-                            <span class="legend-dot-lg" style="@(d <= b ? $"background:{bucket.Color};" : "")"></span>
-                        }
+                    var angle = -Math.PI / 2 + vi * (2 * Math.PI / overviewCount);
+                    var vx = (50 + 46 * Math.Cos(angle)).ToString("0.##", CultureInfo.InvariantCulture);
+                    var vy = (50 + 46 * Math.Sin(angle)).ToString("0.##", CultureInfo.InvariantCulture);
+                    var vIcon = ReportPrintViewModel.GetIndicatorIcon(s.IndicatorDefinition?.IndicatorCode, s.IndicatorDefinition?.Title);
+                    var vMax = s.ScoringScale?.MaxValue ?? 5m;
+                    <div class="radar-vertex" style="left:@(vx)%; top:@(vy)%;">
+                        <div class="radar-vertex-icon">@vIcon</div>
+                        <div class="radar-vertex-name">@s.IndicatorDefinition?.Title</div>
+                        <div class="radar-vertex-score">@s.ScoreValue.ToString("0.0")<small>/@vMax.ToString("0.#")</small></div>
                     </div>
-                    <div class="legend-label" style="color:@bucket.Color;">@bucket.Label</div>
-                </div>
+                }
+            </div>
+
+            <div class="legend-card">
+                @{
+                    var buckets = new (string Range, string Label, string Color)[]
+                    {
+                        ("1 - 1.9", "نیاز به توجه", "#e63946"),
+                        ("2 - 2.9", "نیاز به رشد", "#f4a261"),
+                        ("3 - 3.9", "متوسط", "#e9c46a"),
+                        ("4 - 4.5", "خوب", "#2a9d8f"),
+                        ("4.6 - 5", "بسیار قوی", "#1b4332"),
+                    };
+                }
+                @for (int b = 0; b < buckets.Length; b++)
+                {
+                    var bucket = buckets[b];
+                    <div class="legend-col">
+                        <div class="legend-range">@bucket.Range</div>
+                        <div class="legend-dots">
+                            @for (int d = 0; d < 4; d++)
+                            {
+                                <span class="legend-dot-lg" style="@(d <= b ? $"background:{bucket.Color};" : "")"></span>
+                            }
+                        </div>
+                        <div class="legend-label" style="color:@bucket.Color;">@bucket.Label</div>
+                    </div>
+                }
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(overviewSummary))
+            {
+                <div class="card-box"><h3>📋 خلاصه</h3><p style="font-size:13px;">@overviewSummary</p></div>
             }
-        </div>
 
-        @if (!string.IsNullOrWhiteSpace(overviewSummary))
-        {
-            <div class="card-box"><h3>📋 خلاصه</h3><p style="font-size:13px;">@overviewSummary</p></div>
-        }
-
-        <div class="page-footer">
-            <span class="brand">ANA — Behavior Intelligence</span>
-            <span>@reportCode</span>
+            <div class="page-footer">
+                <span class="brand">ANA — Behavior Intelligence</span>
+                <span>@reportCode</span>
+            </div>
         </div>
-    </div>
-}
+    }
 
     @foreach (var score in _model.IndicatorScores)
     {
