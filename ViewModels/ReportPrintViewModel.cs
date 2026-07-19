@@ -46,8 +46,10 @@ namespace BehavioralReportEngine.Web.ViewModels
             PatternScores.Where(p => p.IsDominantPattern).ToList();
 
         // Small icon per indicator, matched by IndicatorCode keyword since the code is the
-        // one stable, language-independent identifier (Title/TitleEn vary by game).
-        public static string GetIndicatorIcon(string indicatorCode)
+        // one stable, language-independent identifier (Title/TitleEn vary by game). Falls back
+        // to matching Persian keywords in the (always-present) Title when the code doesn't hit,
+        // since not every game seeds IndicatorCode with these English keywords.
+        public static string GetIndicatorIcon(string indicatorCode, string title = null)
         {
             var code = (indicatorCode ?? "").ToUpperInvariant();
             if (code.Contains("LISTEN")) return "\U0001F442";
@@ -55,6 +57,14 @@ namespace BehavioralReportEngine.Web.ViewModels
             if (code.Contains("EMOTION")) return "\U0001F9E0";
             if (code.Contains("EMPATH")) return "\U00002764";
             if (code.Contains("AWARE") || code.Contains("SELF")) return "\U0001F9ED";
+
+            var text = title ?? "";
+            if (text.Contains("شنیدن")) return "\U0001F442";
+            if (text.Contains("ارتباط") || text.Contains("گفتگو")) return "\U0001F4AC";
+            if (text.Contains("هیجان") || text.Contains("احساس")) return "\U0001F9E0";
+            if (text.Contains("همدلی")) return "\U00002764";
+            if (text.Contains("خودآگاهی")) return "\U0001F9ED";
+
             return "\U0001F3AF";
         }
 
