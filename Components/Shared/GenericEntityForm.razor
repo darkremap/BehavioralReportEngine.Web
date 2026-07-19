@@ -56,8 +56,17 @@ else
                 }
                 else if (prop.ClrType == typeof(DateTime))
                 {
-                    <MudDatePicker Label="@prop.Name" Date="@_dateValues.GetValueOrDefault(prop.Name)"
-                                    DateChanged="@(v => _dateValues[prop.Name] = v)" Required="@prop.IsRequired" />
+                    <MudStack Row="true" Spacing="2">
+                        <MudDatePicker Label="@prop.Name" Date="@_dateValues.GetValueOrDefault(prop.Name)"
+                                        DateChanged="@(v => _dateValues[prop.Name] = v)" Required="@prop.IsRequired" />
+                        <MudTimePicker Label="@($"{prop.Name} time (HH:mm)")" Time="@_timeValues.GetValueOrDefault(prop.Name)"
+                                        TimeChanged="@(v => _timeValues[prop.Name] = v)" Editable="true" AmPm="false" />
+                    </MudStack>
+                }
+                else if (IsMillisecondDuration(prop))
+                {
+                    <MudTimePicker Label="@($"{prop.Name} (mm:ss)")" Time="@_timeValues.GetValueOrDefault(prop.Name)"
+                                    TimeChanged="@(v => _timeValues[prop.Name] = v)" Required="@prop.IsRequired" Editable="true" AmPm="false" />
                 }
                 else if (prop.ClrType == typeof(int) || prop.ClrType == typeof(long) || prop.ClrType == typeof(decimal))
                 {
@@ -93,6 +102,7 @@ else
     private readonly Dictionary<string, string> _stringValues = new();
     private readonly Dictionary<string, bool> _boolValues = new();
     private readonly Dictionary<string, DateTime?> _dateValues = new();
+    private readonly Dictionary<string, TimeSpan?> _timeValues = new();
     private readonly Dictionary<string, List<(string Id, string Label)>> _fkOptions = new();
 
     protected override async Task OnInitializedAsync()
@@ -135,6 +145,11 @@ else
             else if (prop.ClrType == typeof(DateTime))
             {
                 _dateValues[prop.Name] = currentValue as DateTime?;
+                _timeValues[prop.Name] = (currentValue as DateTime?)?.TimeOfDay;
+            }
+            else if (IsMillisecondDuration(prop))
+            {
+                _timeValues[prop.Name] = IsEdit && currentValue is int ms ? TimeSpan.FromMilliseconds(ms) : null;
             }
             else if (IsEdit)
             {
@@ -152,6 +167,11 @@ else
             }
         }
     }
+
+    // Millisecond-duration fields (e.g. TimestampMs, ObservationTimeMs) are hard to enter as raw
+    // numbers, so they get a mm:ss time picker instead of a plain numeric textbox.
+    private static bool IsMillisecondDuration(PropertyDescriptor prop) =>
+        prop.ClrType == typeof(int) && prop.Name.EndsWith("Ms", StringComparison.Ordinal);
 
     private async Task OnLogoSelectedAsync(PropertyDescriptor prop, IBrowserFile file)
     {
@@ -189,7 +209,12 @@ else
             if (prop.ClrType == typeof(bool))
                 value = _boolValues.GetValueOrDefault(prop.Name);
             else if (prop.ClrType == typeof(DateTime))
-                value = _dateValues.GetValueOrDefault(prop.Name);
+            {
+                var date = _dateValues.GetValueOrDefault(prop.Name);
+                value = date.HasValue ? date.Value.Date + (_timeValues.GetValueOrDefault(prop.Name) ?? TimeSpan.Zero) : (DateTime?)null;
+            }
+            else if (IsMillisecondDuration(prop))
+                value = (int)(_timeValues.GetValueOrDefault(prop.Name)?.TotalMilliseconds ?? 0);
             else
                 value = ParseScalar(prop, _stringValues.GetValueOrDefault(prop.Name));
 
