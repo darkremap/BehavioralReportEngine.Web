@@ -106,6 +106,22 @@ else
         .moment-time { width: 60px; flex-shrink: 0; font-weight: 700; color: #fff; background: #2a9d8f; border-radius: 6px; text-align: center; padding: 3px 0; font-size: 12px; height: fit-content; }
         .moment-title { font-weight: 700; margin-bottom: 2px; }
         .moment-desc { font-size: 13px; color: #556; }
+
+        /* === سکشن لحظات کلیدی جلسه === */
+        .moment-aside-ring { width: 64px; height: 64px; border-radius: 50%; background: conic-gradient(#2a9d8f 0deg 260deg, #e7efee 260deg 360deg); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+        .moment-aside-ring-inner { width: 52px; height: 52px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .aside-divider { width: 30px; height: 1px; background: #dcdfe1; margin: 16px auto; }
+        .moment-card { position: relative; display: flex; align-items: flex-start; gap: 14px; background: #f9fcfb; border: 1px solid #eef3f2; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; }
+        .moment-card-icon { width: 48px; height: 48px; border-radius: 50%; background: #eaf6f4; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .moment-card-body { flex: 1; }
+        .moment-card-top { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+        .moment-card-time { color: #2a9d8f; font-weight: 700; font-size: 13px; direction: ltr; unicode-bidi: embed; }
+        .moment-card-title { font-weight: 800; font-size: 15px; color: #1b2a33; }
+        .moment-card-desc { font-size: 12px; color: #667; line-height: 1.8; }
+        .moment-card-num-wrap { width: 30px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; position: relative; }
+        .moment-card-num { width: 26px; height: 26px; border-radius: 50%; background: #1b4332; color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1; }
+        .moment-card-num-wrap:after { content: ""; position: absolute; top: 26px; bottom: -16px; left: 50%; width: 2px; background: #e3ece9; transform: translateX(-50%); }
+        .moment-card:last-child .moment-card-num-wrap:after { display: none; }
         .growth-cols { display: flex; gap: 14px; }
         .growth-col { flex: 1; background: #f7fafa; border-radius: 10px; padding: 14px; border-top: 3px solid #ddd; }
         .growth-col-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -450,22 +466,66 @@ else
     @if (_model.KeyMoments.Any())
     {
         pageNumber++;
+        var momentIcons = new[] { "\U0001F4DD", "\U0001F9E0", "\U0001F465", "\U0001F4BC", "\U0001F91D", "\U0001F4AC" };
+        var session = report.GameSession;
+        int? sessionMinutes = session?.StartTime.HasValue == true && session?.EndTime.HasValue == true
+            ? (int)Math.Round((session.EndTime!.Value - session.StartTime!.Value).TotalMinutes)
+            : null;
         <div class="report-page">
             <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span class="page-num">@pageNumber.ToString("00")</span></div>
             <h1 class="page-title">لحظات کلیدی جلسه</h1>
-            <p class="page-desc">این تایم‌لاین، رویدادهای مهم و نقاط عطف رفتاری را در طول جلسه نشان می‌دهد.</p>
-            @foreach (var m in _model.KeyMoments)
-            {
-                var ms = m.KeyMoment?.TimestampMs ?? 0;
-                var ts = TimeSpan.FromMilliseconds(ms);
-                <div class="moment-item">
-                    <div class="moment-time">@ts.ToString(@"mm\:ss")</div>
-                    <div>
-                        <div class="moment-title">@m.KeyMoment?.Title</div>
-                        <div class="moment-desc">@(m.NarrativeText ?? m.KeyMoment?.Description)</div>
+            <p class="page-desc">این تایم‌لاین، رویدادهای مهم و نقاط عطف رفتاری را در طول جلسه نشان می‌دهد. هر لحظه می‌تواند سرنخی برای درک بهتر روند گفتگو و تعاملات باشد.</p>
+
+            <div class="indicator-layout">
+                <div class="pattern-aside">
+                    <div class="pattern-aside-content">
+                        <div class="moment-aside-ring">
+                            <div class="moment-aside-ring-inner">🕐</div>
+                        </div>
+                        <h2>لحظات کلیدی جلسه</h2>
+                        <div class="aside-divider"></div>
+                        @if (sessionMinutes.HasValue)
+                        {
+                            <div class="score-caption">مدت جلسه</div>
+                            <div class="score">@sessionMinutes</div>
+                            <div class="score-caption">دقیقه</div>
+                            <div class="aside-divider"></div>
+                        }
+                        <div class="indicator-quote-box">
+                            <div class="quote-mark">❝</div>
+                            <p>هر تعامل، داستانی از رفتار و تصمیم است. این لحظات کلیدی نشان می‌دهند که چگونه گفتگو پیش رفت و چه عواملی بر نتیجه تأثیر گذاشتند.</p>
+                        </div>
                     </div>
+                    <svg class="pattern-aside-waves" viewBox="0 0 800 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0,120 C150,180 300,60 450,110 C600,160 700,90 800,130 L800,220 L0,220 Z" fill="#eaf6f4" />
+                        <path d="M0,150 C180,90 320,190 500,140 C650,100 720,170 800,150 L800,220 L0,220 Z" fill="#d7efec" />
+                        <path d="M0,180 C200,140 350,210 550,170 C680,145 730,200 800,180 L800,220 L0,220 Z" fill="#2a9d8f" opacity="0.35" />
+                    </svg>
                 </div>
-            }
+
+                <div class="indicator-main">
+                    @foreach (var (m, mi) in _model.KeyMoments.Select((m, idx) => (m, idx)))
+                    {
+                        var ms = m.KeyMoment?.TimestampMs ?? 0;
+                        var ts = TimeSpan.FromMilliseconds(ms);
+                        var absoluteTime = session?.StartTime.HasValue == true ? session.StartTime!.Value.Add(ts) : (DateTime?)null;
+                        <div class="moment-card">
+                            <div class="moment-card-icon">@momentIcons[mi % momentIcons.Length]</div>
+                            <div class="moment-card-body">
+                                <div class="moment-card-top">
+                                    <span class="moment-card-time">@(absoluteTime?.ToString("HH:mm") ?? ts.ToString(@"mm\:ss"))</span>
+                                    <span class="moment-card-title">@m.KeyMoment?.Title</span>
+                                </div>
+                                <div class="moment-card-desc">@(m.NarrativeText ?? m.KeyMoment?.Description)</div>
+                            </div>
+                            <div class="moment-card-num-wrap">
+                                <div class="moment-card-num">@((mi + 1).ToString("00"))</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
             <div class="page-footer"><span class="brand">ANA — Behavior Intelligence</span><span>@reportCode</span></div>
         </div>
     }
