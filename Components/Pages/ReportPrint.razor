@@ -15,7 +15,7 @@ else
     var participantName = report.Participant != null
         ? (string.IsNullOrWhiteSpace(report.Participant.FullNameFa) ? report.Participant.FullNameEn : report.Participant.FullNameFa)
         : (report.Team?.TeamName ?? "-");
-    var reportDate = (report.GeneratedAt ?? report.CreatedAt).ToString("yyyy/MM/dd");
+    var reportDate = ReportPrintViewModel.ToPersianDate(report.GeneratedAt ?? report.CreatedAt);
     var reportCode = $"ANA-{report.ReportId}";
     int pageNumber = 1;
 
@@ -49,17 +49,30 @@ else
         .legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-left: 4px; }
         .indicator-layout { display: flex; gap: 22px; }
         .indicator-aside { width: 190px; flex-shrink: 0; text-align: center; }
-        .indicator-icon-circle { width: 56px; height: 56px; border-radius: 50%; background: #eaf6f4; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 12px; }
-        .indicator-aside .score { font-size: 34px; font-weight: 800; color: #2a9d8f; }
-        .indicator-aside .score small { font-size: 16px; color: #999; }
-        .level-chip { display: inline-block; padding: 4px 16px; border-radius: 14px; font-weight: 700; font-size: 12px; margin-top: 8px; color: #fff; }
+        .indicator-icon-circle { width: 64px; height: 64px; border-radius: 50%; background: #eaf6f4; border: 1px solid #d9f0ec; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px; }
+        .score-caption { font-size: 12px; color: #889; margin-bottom: 2px; }
+        .score { font-size: 34px; font-weight: 800; color: #2a9d8f; direction: ltr; unicode-bidi: embed; }
+        .score small { font-size: 16px; color: #999; }
+        .score-bar-track { width: 100%; height: 6px; background: #e7efee; border-radius: 3px; overflow: hidden; margin: 10px 0 6px; }
+        .score-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #2a9d8f, #1b4332); }
+        .level-plain { font-weight: 700; font-size: 14px; margin-top: 4px; }
         .dots { display: flex; justify-content: center; gap: 4px; margin: 8px 0; }
         .dot { width: 9px; height: 9px; border-radius: 50%; background: #ddd; }
         .dot.filled { background: #2a9d8f; }
+        .indicator-quote-box { background: #f7fafa; border: 1px solid #e7efee; border-radius: 10px; padding: 16px 14px; margin-top: 20px; text-align: center; position: relative; }
+        .indicator-quote-box .quote-mark { font-size: 26px; color: #2a9d8f; line-height: 1; font-weight: 800; }
+        .indicator-quote-box p { font-size: 12px; color: #556; font-style: italic; line-height: 1.8; margin: 4px 0 0; }
         .indicator-main { flex: 1; }
         ul.evidence-list { list-style: none; padding: 0; margin: 0; }
         ul.evidence-list li { padding: 6px 0; border-bottom: 1px dashed #eee; font-size: 13px; }
         ul.evidence-list li:before { content: "✓ "; color: #2a9d8f; font-weight: 700; }
+        .behavior-chips-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .behavior-chip { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; background: #fff; border: 1px solid #eef3f2; border-radius: 10px; padding: 12px 8px; }
+        .behavior-chip-icon { width: 34px; height: 34px; border-radius: 50%; background: #f7fafa; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .behavior-chip span { font-size: 12px; font-weight: 600; color: #334; }
+        ul.growth-list { list-style: none; padding: 0; margin: 0; }
+        ul.growth-list li { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 13px; }
+        ul.growth-list li:before { content: "●"; color: #2a9d8f; font-size: 8px; margin-top: 6px; flex-shrink: 0; }
         .pattern-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid #eee; }
         .pattern-row .name { width: 190px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .pattern-row .bar-track { flex: 1; background: #eee; border-radius: 6px; height: 10px; overflow: hidden; }
@@ -67,6 +80,28 @@ else
         .pattern-row .score { width: 60px; text-align: left; font-weight: 700; color: #2a9d8f; font-size: 13px; }
         .pattern-row.dominant .name { color: #1b4332; }
         .dominant-badge { display: inline-block; background: #fff3cd; color: #b8860b; font-size: 10px; padding: 2px 8px; border-radius: 10px; }
+
+        /* === سکشن الگوهای رفتاری مشاهده‌شده === */
+        .pattern-aside { width: 190px; flex-shrink: 0; text-align: center; position: relative; overflow: hidden; padding-bottom: 20px; }
+        .pattern-aside h2 { font-size: 18px; margin: 0 0 14px; line-height: 1.4; }
+        .pattern-aside-waves { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; z-index: 0; opacity: 0.8; }
+        .pattern-aside-content { position: relative; z-index: 1; }
+        .pattern-aside-desc { font-size: 12px; color: #667; margin-top: 14px; line-height: 1.9; }
+        .pattern-card { display: flex; gap: 14px; align-items: flex-start; background: #f9fcfb; border: 1px solid #eef3f2; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+        .pattern-card.dominant { border-color: #cfe9e4; background: #f2faf8; }
+        .pattern-card-icon { width: 46px; height: 46px; border-radius: 50%; background: #eaf6f4; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .pattern-card-body { flex: 1; }
+        .pattern-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .pattern-card-name { font-size: 16px; font-weight: 800; color: #1b2a33; }
+        .pattern-card-score-wrap { text-align: left; flex-shrink: 0; }
+        .pattern-card-score-caption { font-size: 10px; color: #99a; }
+        .pattern-card-score { font-size: 22px; font-weight: 800; color: #2a9d8f; direction: ltr; unicode-bidi: embed; }
+        .pattern-card-score small { font-size: 12px; color: #999; font-weight: 600; }
+        .pattern-card-desc { font-size: 12px; color: #667; margin: 6px 0 12px; }
+        .pattern-line-track { position: relative; height: 4px; background: #e7efee; border-radius: 2px; }
+        .pattern-line-fill { position: relative; height: 100%; background: #2a9d8f; border-radius: 2px; }
+        .pattern-line-fill:after { content: ""; position: absolute; left: 0; top: 50%; width: 12px; height: 12px; border-radius: 50%; background: #2a9d8f; border: 2px solid #fff; box-shadow: 0 0 0 1px #2a9d8f; transform: translate(-50%, -50%); }
+        .summary-icon-box { width: 48px; height: 48px; border-radius: 14px; background: #1b4332; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
         .moment-item { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px dashed #eee; }
         .moment-time { width: 60px; flex-shrink: 0; font-weight: 700; color: #fff; background: #2a9d8f; border-radius: 6px; text-align: center; padding: 3px 0; font-size: 12px; height: fit-content; }
         .moment-title { font-weight: 700; margin-bottom: 2px; }
@@ -241,6 +276,9 @@ else
         var (levelLabel, levelColor) = ReportPrintViewModel.GetLevelInfo(level);
         var filledDots = (int)Math.Round((score.ScoreValue / max) * 5m);
         var icon = ReportPrintViewModel.GetIndicatorIcon(score.IndicatorDefinition?.IndicatorCode, score.IndicatorDefinition?.Title);
+        var quote = ReportPrintViewModel.GetIndicatorQuote(score.IndicatorDefinition?.Title);
+        var scorePct = max > 0 ? (double)(score.ScoreValue / max) * 100 : 0;
+        var behaviorIcons = new[] { "\U0001F441", "\U0001F9E0", "\U0001F4AC", "\U0001F9E9" };
         <div class="report-page">
             <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span class="page-num">@pageNumber.ToString("00")</span></div>
             <div class="indicator-layout">
@@ -248,18 +286,24 @@ else
                     <div class="indicator-icon-circle">@icon</div>
                     <h2 style="font-size:18px;margin-bottom:4px;">@score.IndicatorDefinition?.Title</h2>
                     <div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:10px;">@score.IndicatorDefinition?.TitleEn</div>
+                    <div class="score-caption">امتیاز شما</div>
                     <div class="score">@score.ScoreValue.ToString("0.0") <small>/@max.ToString("0.#")</small></div>
+                    <div class="score-bar-track"><div class="score-bar-fill" style="width:@(scorePct)%;"></div></div>
                     <div class="dots">
                         @for (int i = 0; i < 5; i++)
                         {
                             <span class="@(i < filledDots ? "dot filled" : "dot")"></span>
                         }
                     </div>
-                    <div class="level-chip" style="background:@levelColor;">@levelLabel</div>
+                    <div class="level-plain" style="color:@levelColor;">@levelLabel</div>
                     @if (!string.IsNullOrWhiteSpace(score.IndicatorDefinition?.ShortDefinition))
                     {
                         <p style="font-size:12px;color:#667;margin-top:14px;">@score.IndicatorDefinition.ShortDefinition</p>
                     }
+                    <div class="indicator-quote-box">
+                        <div class="quote-mark">❝</div>
+                        <p>@quote</p>
+                    </div>
                 </div>
                 <div class="indicator-main">
                     @if (!string.IsNullOrWhiteSpace(score.ObservedEvidence))
@@ -276,7 +320,18 @@ else
                     }
                     @if (!string.IsNullOrWhiteSpace(score.IndicatorBehaviors))
                     {
-                        <div class="card-box"><h3>🕒 رفتارهای شاخص</h3><p style="font-size:13px;">@score.IndicatorBehaviors</p></div>
+                        <div class="card-box">
+                            <h3>🏅 رفتارهای شاخص</h3>
+                            <div class="behavior-chips-grid">
+                                @foreach (var (line, bi) in score.IndicatorBehaviors.Split('\n', StringSplitOptions.RemoveEmptyEntries).Select((l, idx) => (l, idx)))
+                                {
+                                    <div class="behavior-chip">
+                                        <div class="behavior-chip-icon">@behaviorIcons[bi % behaviorIcons.Length]</div>
+                                        <span>@line.Trim()</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     }
                     @if (!string.IsNullOrWhiteSpace(score.Strengths))
                     {
@@ -284,7 +339,15 @@ else
                     }
                     @if (!string.IsNullOrWhiteSpace(score.GrowthOpportunities))
                     {
-                        <div class="card-box"><h3>🌱 فرصت‌های رشد</h3><p style="font-size:13px;">@score.GrowthOpportunities</p></div>
+                        <div class="card-box">
+                            <h3>🌱 فرصت‌های رشد</h3>
+                            <ul class="growth-list">
+                                @foreach (var line in score.GrowthOpportunities.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    <li>@line.Trim()</li>
+                                }
+                            </ul>
+                        </div>
                     }
                     @if (!string.IsNullOrWhiteSpace(score.PracticalRecommendation))
                     {
@@ -300,31 +363,85 @@ else
     {
         pageNumber++;
         var patternMax = _model.PatternScores.Count;
+        var patternMaxDec = (decimal)patternMax;
+        var avgPatternScore = _model.PatternScores.Where(p => p.ScoreValue.HasValue).Select(p => p.ScoreValue!.Value).DefaultIfEmpty(0).Average();
+        var patternLevel = ReportPrintViewModel.GetLevel(avgPatternScore, patternMaxDec);
+        var (patternLevelLabel, patternLevelColor) = ReportPrintViewModel.GetLevelInfo(patternLevel);
+        var patternFilledDots = patternMaxDec > 0 ? (int)Math.Round((avgPatternScore / patternMaxDec) * 5m) : 0;
+        var patternScorePct = patternMaxDec > 0 ? (double)(avgPatternScore / patternMaxDec) * 100 : 0;
         <div class="report-page">
             <div class="page-header"><span>@gameName | گزارش مشاهده رفتاری</span><span class="page-num">@pageNumber.ToString("00")</span></div>
             <h1 class="page-title">الگوهای رفتاری مشاهده‌شده</h1>
-            <p class="page-desc">بر اساس تحلیل گفتگو، الگوهای رفتاری اصلی @participantName در تعاملاتش شناسایی شده است.</p>
-            @foreach (var p in _model.PatternScores)
-            {
-                var pct = patternMax > 0 && p.ScoreValue.HasValue ? (double)(p.ScoreValue.Value / patternMax) * 100 : 0;
-                var pIcon = ReportPrintViewModel.GetPatternIcon(p.BehavioralPattern?.PatternCode);
-                <div class="pattern-row @(p.IsDominantPattern ? "dominant" : "")">
-                    <div class="name">
-                        <span>@pIcon</span>
-                        @p.BehavioralPattern?.Name
-                        @if (p.IsDominantPattern)
-                        {
-                            <span class="dominant-badge">غالب ⭐</span>
-                        }
+            <p class="page-desc">بر اساس تحلیل گفتگوی @participantName، الگوی رفتاری اصلی در تعاملات شناسایی شده است.</p>
+
+            <div class="indicator-layout">
+                <div class="pattern-aside">
+                    <div class="pattern-aside-content">
+                        <div class="indicator-icon-circle">👥</div>
+                        <h2>الگوهای رفتاری مشاهده‌شده</h2>
+                        <div class="score-caption">امتیاز شما</div>
+                        <div class="score">@avgPatternScore.ToString("0.0") <small>/@patternMax</small></div>
+                        <div class="score-bar-track"><div class="score-bar-fill" style="width:@(patternScorePct)%;"></div></div>
+                        <div class="dots">
+                            @for (int i = 0; i < 5; i++)
+                            {
+                                <span class="@(i < patternFilledDots ? "dot filled" : "dot")"></span>
+                            }
+                        </div>
+                        <div class="score-caption" style="margin-top:10px;">سطح بروز الگوها</div>
+                        <div class="level-plain" style="color:@patternLevelColor;">@patternLevelLabel</div>
+                        <p class="pattern-aside-desc">این بخش نشان می‌دهد در طول گفتگو بیشتر از کدام الگوهای رفتاری استفاده کرده‌اید. شناخت این الگوها به شما کمک می‌کند نقاط قوت خود را تقویت و رفتارهای مؤثرتری را در تعاملات آینده انتخاب کنید.</p>
                     </div>
-                    <div class="bar-track"><div class="bar-fill" style="width:@(pct)%;"></div></div>
-                    <div class="score">@(p.ScoreValue?.ToString("0.0") ?? "-") /@patternMax</div>
+                    <svg class="pattern-aside-waves" viewBox="0 0 800 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M0,120 C150,180 300,60 450,110 C600,160 700,90 800,130 L800,220 L0,220 Z" fill="#eaf6f4" />
+                        <path d="M0,150 C180,90 320,190 500,140 C650,100 720,170 800,150 L800,220 L0,220 Z" fill="#d7efec" />
+                        <path d="M0,180 C200,140 350,210 550,170 C680,145 730,200 800,180 L800,220 L0,220 Z" fill="#2a9d8f" opacity="0.35" />
+                    </svg>
                 </div>
-            }
+
+                <div class="indicator-main">
+                    @foreach (var p in _model.PatternScores)
+                    {
+                        var pct = patternMax > 0 && p.ScoreValue.HasValue ? (double)(p.ScoreValue.Value / patternMax) * 100 : 0;
+                        var pIcon = ReportPrintViewModel.GetPatternIcon(p.BehavioralPattern?.PatternCode, p.BehavioralPattern?.Name);
+                        <div class="pattern-card @(p.IsDominantPattern ? "dominant" : "")">
+                            <div class="pattern-card-icon">@pIcon</div>
+                            <div class="pattern-card-body">
+                                <div class="pattern-card-header">
+                                    <div class="pattern-card-name">
+                                        @p.BehavioralPattern?.Name
+                                        @if (p.IsDominantPattern)
+                                        {
+                                            <span class="dominant-badge">غالب ⭐</span>
+                                        }
+                                    </div>
+                                    <div class="pattern-card-score-wrap">
+                                        <div class="pattern-card-score-caption">امتیاز از @patternMax</div>
+                                        <div class="pattern-card-score">@(p.ScoreValue?.ToString("0.0") ?? "-") <small>/@patternMax</small></div>
+                                    </div>
+                                </div>
+                                @{ var patternCardDesc = !string.IsNullOrWhiteSpace(p.Description) ? p.Description : p.BehavioralPattern?.Description; }
+                                @if (!string.IsNullOrWhiteSpace(patternCardDesc))
+                                {
+                                    <div class="pattern-card-desc">@patternCardDesc</div>
+                                }
+                                <div class="pattern-line-track"><div class="pattern-line-fill" style="width:@(pct)%;"></div></div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
             @{ var summaryText = _model.PatternScores.FirstOrDefault(p => !string.IsNullOrWhiteSpace(p.Description))?.Description; }
             @if (!string.IsNullOrWhiteSpace(summaryText))
             {
-                <div class="card-box" style="margin-top:20px;"><h3>📋 جمع‌بندی</h3><p style="font-size:13px;">@summaryText</p></div>
+                <div class="card-box" style="margin-top:20px; display:flex; align-items:flex-start; gap:16px;">
+                    <div class="summary-icon-box">📋</div>
+                    <div>
+                        <h3 style="margin-bottom:6px;">جمع‌بندی</h3>
+                        <p style="font-size:13px;">@summaryText</p>
+                    </div>
+                </div>
             }
             <div class="page-footer"><span class="brand">ANA — Behavior Intelligence</span><span>@reportCode</span></div>
         </div>

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using BehavioralReportEngine.Web.Models;
 
@@ -6,6 +8,22 @@ namespace BehavioralReportEngine.Web.ViewModels
 {
     public class ReportPrintViewModel
     {
+        private static readonly string[] PersianMonthNames =
+        {
+            "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+            "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
+        };
+
+        // "12 / اردیبهشت / 1405" formatted Shamsi (Jalali) date, per the SELVA report's cover page.
+        public static string ToPersianDate(DateTime date)
+        {
+            var calendar = new PersianCalendar();
+            var day = calendar.GetDayOfMonth(date);
+            var month = calendar.GetMonth(date);
+            var year = calendar.GetYear(date);
+            return $"{day} / {PersianMonthNames[month - 1]} / {year}";
+        }
+
         public Report Report { get; set; }
 
         public List<ReportIndicatorScore> IndicatorScores { get; set; } = new List<ReportIndicatorScore>();
@@ -68,7 +86,23 @@ namespace BehavioralReportEngine.Web.ViewModels
             return "\U0001F3AF";
         }
 
-        public static string GetPatternIcon(string patternCode)
+        // Short reflective quote per indicator, matched by Persian keyword in the Title,
+        // shown in the closing quote box of each indicator detail page.
+        public static string GetIndicatorQuote(string title)
+        {
+            var text = title ?? "";
+            if (text.Contains("شنیدن")) return "گوش دادن، فقط شنیدن صداها نیست؛ درک حضور انسان مقابل و پاسخ دادن با آگاهی است.";
+            if (text.Contains("ارتباط")) return "وقتی پیام شما ساختاریافته باشد، دیگران سریع‌تر همراهتان می‌شوند و همکاری مؤثرتری شکل می‌گیرد.";
+            if (text.Contains("هیجان")) return "کنترل هیجان به معنای نبود احساسات نیست؛ بلکه توانایی انتخاب آگاهانه پاسخ مناسب در هر شرایطی است.";
+            if (text.Contains("همدلی")) return "همدلی یعنی با قلب دیگران دیدن دنیا، بدون اینکه مسیر خود را گم کنیم.";
+            if (text.Contains("خودآگاهی")) return "خودآگاهی، نخستین گام برای انتخاب آگاهانه رفتار است.";
+            return "هر گفتگو فرصتی است برای شناخت بهتر خود و دیگران.";
+        }
+
+        // Falls back to matching Persian keywords in the (always-present) pattern Name when
+        // PatternCode doesn't contain the expected English keyword - same reasoning as
+        // GetIndicatorIcon's fallback.
+        public static string GetPatternIcon(string patternCode, string name = null)
         {
             var code = (patternCode ?? "").ToUpperInvariant();
             if (code.Contains("ANALYST")) return "\U0001F50D";
@@ -77,6 +111,15 @@ namespace BehavioralReportEngine.Web.ViewModels
             if (code.Contains("PARTICIP") || code.Contains("ACTIVE")) return "\U0001F64B";
             if (code.Contains("NARRAT") || code.Contains("STORY")) return "\U0001F4AD";
             if (code.Contains("FACILIT")) return "\U0001F393";
+
+            var text = name ?? "";
+            if (text.Contains("تحلیل")) return "\U0001F50D";
+            if (text.Contains("ناظر")) return "\U0001F441";
+            if (text.Contains("میانجی")) return "\U0001F91D";
+            if (text.Contains("مشارکت")) return "\U0001F64B";
+            if (text.Contains("روایت")) return "\U0001F4AD";
+            if (text.Contains("تسهیل")) return "\U0001F393";
+
             return "\U0001F539";
         }
 
