@@ -28,7 +28,9 @@
       "Bash(mkdir -p \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Services\" \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Components\\\\Layout\" \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Components\\\\Pages\" \"D:\\\\Ana\\\\AnaPlaygroupReport\\\\03\\\\BehavioralReportEngine.Web\\\\Components\\\\Shared\")",
       "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -C -Q \"SELECT ReportId, ReportTitle FROM report.Report;\" -Q \"SELECT ReportId FROM report.Report;\" 2>&1)",
       "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -C -Q \"SELECT LogoPath FROM core.Organization WHERE OrganizationId=3;\")",
-      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -C -Q \"DELETE FROM core.Department WHERE DepartmentCode='TEST1';\")"
+      "PowerShell(sqlcmd -S . -U sa -P sa123456SA -d BehavioralReportEngine -C -Q \"DELETE FROM core.Department WHERE DepartmentCode='TEST1';\")",
+      "Bash(awk '/<style>/{f=1} f{print} /<\\\\/style>/{f=0}' Components/Pages/ReportPrint.razor)",
+      "Bash(git restore *)"
     ]
   }
 }

@@ -44,6 +44,42 @@ namespace BehavioralReportEngine.Web.ViewModels
 
         public List<ReportPatternScore> DominantPatterns =>
             PatternScores.Where(p => p.IsDominantPattern).ToList();
+
+        // Small icon per indicator, matched by IndicatorCode keyword since the code is the
+        // one stable, language-independent identifier (Title/TitleEn vary by game).
+        public static string GetIndicatorIcon(string indicatorCode)
+        {
+            var code = (indicatorCode ?? "").ToUpperInvariant();
+            if (code.Contains("LISTEN")) return "\U0001F442";
+            if (code.Contains("CLARITY") || code.Contains("COMMUNICAT")) return "\U0001F4AC";
+            if (code.Contains("EMOTION")) return "\U0001F9E0";
+            if (code.Contains("EMPATH")) return "\U00002764";
+            if (code.Contains("AWARE") || code.Contains("SELF")) return "\U0001F9ED";
+            return "\U0001F3AF";
+        }
+
+        public static string GetPatternIcon(string patternCode)
+        {
+            var code = (patternCode ?? "").ToUpperInvariant();
+            if (code.Contains("ANALYST")) return "\U0001F50D";
+            if (code.Contains("OBSERV")) return "\U0001F441";
+            if (code.Contains("MEDIAT")) return "\U0001F91D";
+            if (code.Contains("PARTICIP") || code.Contains("ACTIVE")) return "\U0001F64B";
+            if (code.Contains("NARRAT") || code.Contains("STORY")) return "\U0001F4AD";
+            if (code.Contains("FACILIT")) return "\U0001F393";
+            return "\U0001F539";
+        }
+
+        // Best-effort color/icon per growth-map column, matched by keyword in the (free-text) Area
+        // label since growth areas aren't backed by a fixed enum.
+        public static (string Icon, string Color) GetGrowthColumnStyle(string area)
+        {
+            var text = area ?? "";
+            if (text.Contains("ادامه")) return ("\U0001F4C8", "#2a9d8f");
+            if (text.Contains("تمرین")) return ("\U0001F4AA", "#457b9d");
+            if (text.Contains("مراقب")) return ("\U000026A0", "#e76f51");
+            return ("\U0001F3AF", "#457b9d");
+        }
     }
 
     public enum ScoreLevel
